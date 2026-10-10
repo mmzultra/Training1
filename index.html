@@ -76,11 +76,11 @@
         }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes pulseRed {
-            0% { fill: rgba(239, 68, 68, 0.9); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8)); }
-            50% { fill: rgba(239, 68, 68, 0.4); filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.2)); }
-            100% { fill: rgba(239, 68, 68, 0.9); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8)); }
+            0% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255, 45, 45, 0.8)); }
+            50% { opacity: 0.4; filter: drop-shadow(0 0 2px rgba(255, 45, 45, 0.2)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255, 45, 45, 0.8)); }
         }
-        .muscle-pulse { animation: pulseRed 2s infinite ease-in-out; }
+        .muscle-pulse { animation: pulseRed 1.4s infinite ease-in-out; }
     </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen flex flex-col select-none pb-24">
@@ -106,7 +106,7 @@
     <!-- Contenu Principal -->
     <main id="main-container" class="flex-1 max-w-4xl w-full mx-auto p-6">
 
-        <!-- 1. VUE ACCUEIL (CARTE MUSCULAIRE VIVANTE) -->
+        <!-- 1. VUE ACCUEIL (CARTE MUSCULAIRE VIVANTE - body-highlighter) -->
         <div id="view-accueil" class="space-y-6 animate-fade-in">
             <!-- Bannière AI & Mode Épaule -->
             <div class="glass-card p-6 rounded-3xl relative overflow-hidden border border-white/10">
@@ -127,7 +127,7 @@
                 </div>
             </div>
 
-            <!-- Silhouette Vivante SVG -->
+            <!-- Carte Musculaire Vivante (body-highlighter) -->
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="flex items-center justify-between">
                     <div>
@@ -135,33 +135,31 @@
                         <h3 class="text-lg font-bold text-white">Carte Musculaire Vivante</h3>
                     </div>
                     <div class="flex bg-dark-700 p-1 rounded-xl border border-white/10 text-xs">
-                        <button onclick="setMuscleView('face')" id="btn-view-face" class="px-3 py-1 rounded-lg bg-white/10 text-white font-semibold">Face</button>
-                        <button onclick="setMuscleView('back')" id="btn-view-back" class="px-3 py-1 rounded-lg text-gray-400">Dos</button>
+                        <button onclick="setMuscleView('anterior')" id="btn-view-face" class="px-3 py-1 rounded-lg bg-white/10 text-white font-semibold">Face</button>
+                        <button onclick="setMuscleView('posterior')" id="btn-view-back" class="px-3 py-1 rounded-lg text-gray-400">Dos</button>
                     </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row items-center gap-6 justify-center">
-                    <!-- SVG Silhouette -->
-                    <div class="w-64 h-96 relative flex items-center justify-center bg-black/40 rounded-2xl border border-white/5 p-2">
-                        <svg viewBox="0 0 200 400" class="w-full h-full" id="svg-muscle-map">
-                            <!-- Silhouette Corps Anthracite Fond -->
-                            <g id="body-silhouette" fill="#1f1f24" stroke="#2a2a32" stroke-width="1.5">
-                                <!-- Tête / Cou -->
-                                <ellipse cx="100" cy="35" rx="18" ry="22"/>
-                                <path d="M92 55 L108 55 L112 70 L88 70 Z"/>
-                                <!-- Tronc / Épaules -->
-                                <path d="M70 75 Q100 70 130 75 L140 135 L120 180 L100 175 L80 180 L60 135 Z"/>
-                            </g>
-                            <!-- Groupes Musculaires Interactifs (Face / Dos injectés en JS) -->
-                            <g id="interactive-muscles"></g>
-                        </svg>
+                <div class="flex flex-col items-center gap-4 justify-center">
+                    <!-- Conteneur body-highlighter (Grand, centré, fond noir, lisible iPhone) -->
+                    <div class="w-full max-w-sm h-[380px] relative flex items-center justify-center bg-black rounded-2xl border border-white/10 p-2 overflow-hidden" id="body-highlighter-container">
+                        <div id="offline-msg" class="hidden text-xs text-gray-400 absolute">Carte indisponible hors ligne</div>
+                    </div>
+
+                    <!-- Légende des couleurs -->
+                    <div class="flex flex-wrap justify-center gap-3 text-[10px] text-gray-400 pt-1">
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#ff2d2d] inline-block animate-pulse"></span> &lt; 24h</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#c0392b] inline-block"></span> 24-48h</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#e67e22] inline-block"></span> 48-72h</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#2ecc71] inline-block"></span> 72h+ (Récup)</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#3a3a3f] inline-block"></span> Inactif</span>
                     </div>
 
                     <!-- Panneau info muscle sélectionné -->
-                    <div class="flex-1 space-y-4 w-full">
+                    <div class="w-full space-y-4">
                         <div id="muscle-info-card" class="bg-dark-700/60 p-5 rounded-2xl border border-white/10 space-y-2">
                             <h4 id="selected-muscle-title" class="text-base font-bold text-white">Sélectionne un muscle</h4>
-                            <p id="selected-muscle-status" class="text-xs text-gray-400">Clique sur une zone de la silhouette pour voir ton état de récupération et ton volume hebdomadaire.</p>
+                            <p id="selected-muscle-status" class="text-xs text-gray-400">Clique sur une zone de la silhouette pour voir ton état de récupération et ton volume.</p>
                             <div id="selected-muscle-details" class="text-xs text-gray-300 pt-2 border-t border-white/5 hidden space-y-1">
                                 <div class="flex justify-between"><span>Dernière séance :</span><strong id="m-last-date" class="text-white">-</strong></div>
                                 <div class="flex justify-between"><span>Volume semaine :</span><strong id="m-volume" class="text-white">-</strong></div>
@@ -402,7 +400,92 @@
         </div>
     </div>
 
-    <!-- Script Application -->
+    <!-- Body-Highlighter ES Module Integration -->
+    <script type="module">
+        import createBodyHighlighter from 'https://cdn.jsdelivr.net/npm/body-highlighter/+esm';
+
+        let highlighterInstance = null;
+
+        window.initApexBodyMap = function(viewType = 'anterior') {
+            const container = document.getElementById('body-highlighter-container');
+            if (!container) return;
+
+            const offlineMsg = document.getElementById('offline-msg');
+            if (offlineMsg) offlineMsg.classList.add('hidden');
+
+            const logs = JSON.parse(localStorage.getItem('apex_muscle_logs') || '{}');
+            const now = Date.now();
+
+            const allMuscles = [
+                'trapezius', 'upper-back', 'lower-back', 'chest', 'biceps', 'triceps', 
+                'forearm', 'back-deltoids', 'front-deltoids', 'abs', 'obliques', 
+                'adductor', 'hamstring', 'quadriceps', 'abductors', 'calves', 'gluteal'
+            ];
+
+            let exercisesData = allMuscles.map(m => {
+                const lastTime = logs[m] || 0;
+                const diffHours = lastTime ? (now - lastTime) / (1000 * 60 * 60) : 9999;
+                
+                let freq = 0;
+                if (diffHours < 24) freq = 1;
+                else if (diffHours < 48) freq = 2;
+                else if (diffHours < 72) freq = 3;
+                else if (diffHours <= 168) freq = 4;
+                else freq = 0;
+
+                return {
+                    name: m,
+                    muscles: [m],
+                    frequency: freq > 0 ? freq : undefined
+                };
+            }).filter(item => item.frequency !== undefined);
+
+            try {
+                if (highlighterInstance && typeof highlighterInstance.destroy === 'function') {
+                    highlighterInstance.destroy();
+                }
+
+                highlighterInstance = createBodyHighlighter({
+                    container: container,
+                    data: exercisesData,
+                    type: viewType,
+                    bodyColor: '#3a3a3f',
+                    highlightedColors: ['#ff2d2d', '#c0392b', '#e67e22', '#2ecc71'],
+                    onClick: (stats) => {
+                        if (window.handleMuscleClickGlobal) {
+                            window.handleMuscleClickGlobal(stats);
+                        }
+                    }
+                });
+
+                // Appliquer l'animation de pulsation aux éléments rouge vif (#ff2d2d)
+                setTimeout(() => {
+                    const svg = container.querySelector('svg');
+                    if (svg) {
+                        const paths = svg.querySelectorAll('path, polygon, circle, g');
+                        paths.forEach(p => {
+                            const fill = p.getAttribute('fill') || '';
+                            if (fill.toLowerCase() === '#ff2d2d' || fill.toLowerCase() === 'rgb(255, 45, 45)') {
+                                p.classList.add('muscle-pulse');
+                            }
+                        });
+                    }
+                }, 100);
+
+            } catch (e) {
+                console.error('Body highlighter error:', e);
+                if (offlineMsg) offlineMsg.classList.remove('hidden');
+            }
+        };
+
+        window.updateBodyMap = function(viewType) {
+            if (window.initApexBodyMap) {
+                window.initApexBodyMap(viewType);
+            }
+        };
+    </script>
+
+    <!-- Script Application Principal -->
     <script>
         // Moteur de Données des Séances Strictes
         const workoutsData = {
@@ -415,7 +498,7 @@
                     { name: "Écarté incliné haltères", sets: "3 × 10-12", restSec: 75, restText: "Repos 75-90 sec", cue: "Contrôle strict de l'étirement en haut de mouvement.", dbName: "Incline fly" },
                     { name: "Écarté poulie hauteur moyenne (Crossover)", sets: "3 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Contraction forte au milieu de la poitrine.", dbName: "Cable crossover" }
                 ],
-                muscles: ["pectoraux", "epaules"]
+                muscles: ["chest", "front-deltoids", "triceps"]
             },
             "dos": {
                 title: "Dos + Posture",
@@ -428,7 +511,7 @@
                     { name: "Reverse fly ou Prone Y-T-W", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Renforcement haut du dos et correction des épaules en avant.", dbName: "Reverse fly" },
                     { name: "Rotations externes élastique", sets: "2-3 × 12-15 par côté", restSec: 45, restText: "Repos 45 sec", cue: "Coude collé au corps, rotation externe contrôlée.", dbName: "External rotation" }
                 ],
-                muscles: ["dos", "trapezes"]
+                muscles: ["upper-back", "lower-back", "back-deltoids", "biceps"]
             },
             "jambes": {
                 title: "Jambes (Cuisses) — Style Boxeur",
@@ -441,7 +524,7 @@
                     { name: "Romanian Deadlift", sets: "3 × 8-10", restSec: 90, restText: "Repos 90 sec", cue: "Étirement fort des ischio-jambiers, hanches vers l'arrière.", dbName: "Romanian deadlift" },
                     { name: "Leg Curl", sets: "3 × 10-12", restSec: 60, restText: "Repos 60 sec", cue: "Contrôle excentrique strict.", dbName: "Leg curl" }
                 ],
-                muscles: ["quadriceps", "ischio-jambiers", "fessiers"]
+                muscles: ["quadriceps", "gluteal", "hamstring", "calves"]
             },
             "fessiers": {
                 title: "Fessiers",
@@ -449,7 +532,7 @@
                 exercises: [
                     { name: "Hip Thrust lourd", sets: "4 × 8-12", restSec: 120, restText: "Repos 2 min", cue: "Exercice principal pour fessiers bombés et robustes. Extension complète du bassin.", dbName: "Barbell hip thrust" }
                 ],
-                muscles: ["fessiers"]
+                muscles: ["gluteal", "hamstring"]
             },
             "mollets": {
                 title: "Mollets",
@@ -458,7 +541,7 @@
                     { name: "Standing Calf Raise", sets: "4-5 × 10-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Amplitude complète, pause 1-2 secondes en bas, contraction en haut.", dbName: "Standing calf raise" },
                     { name: "Seated Calf Raise", sets: "3-4 × 12-20", restSec: 60, restText: "Repos 60 sec", cue: "Cible le soléaire pour l'épaisseur de la jambe.", dbName: "Seated calf raise" }
                 ],
-                muscles: ["mollets"]
+                muscles: ["calves"]
             },
             "avant-bras": {
                 title: "Avant-bras / Poignets",
@@ -468,7 +551,7 @@
                     { name: "Reverse Wrist Curl (paumes vers le bas)", sets: "4 × 15-20", restSec: 60, restText: "Repos 60 sec", cue: "Renforcement extenseurs et avant-bras.", dbName: "Reverse wrist curl" },
                     { name: "Farmer's Walk ou holds lourds", sets: "3 × 30-40 secondes", restSec: 90, restText: "Repos 90 sec", cue: "Marche avec charges lourdes ou maintien statique maximal.", dbName: "Farmers walk" }
                 ],
-                muscles: ["avant-bras"]
+                muscles: ["forearm"]
             },
             "epaules": {
                 title: "Épaules",
@@ -479,7 +562,7 @@
                     { name: "Développé militaire ou machine", sets: "3 × 8-10", restSec: 105, restText: "Repos 90-120 sec", cue: "Attention épaule droite : adapter l'amplitude si besoin.", dbName: "Military press" },
                     { name: "Reverse fly", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Faisceau postérieur de l'épaule.", dbName: "Reverse fly" }
                 ],
-                muscles: ["epaules", "trapezes"]
+                muscles: ["front-deltoids", "back-deltoids", "trapezius"]
             },
             "biceps": {
                 title: "Biceps",
@@ -509,7 +592,7 @@
                     { name: "Cable Crunch", sets: "3 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Flexion vertébrale maximale.", dbName: "Cable crunch" },
                     { name: "Side Plank ou Pallof Press", sets: "3 × 30-45 sec par côté", restSec: 60, restText: "Repos 60 sec", cue: "Anti-rotation et stabilité latérale.", dbName: "Pallof press" }
                 ],
-                muscles: ["abdos"]
+                muscles: ["abs", "obliques"]
             },
             "mobilite": {
                 title: "Mobilité & Correction",
@@ -520,7 +603,7 @@
                     { name: "Rotations externes élastique", sets: "2-3 × 12-15", restSec: 45, restText: "Repos 45 sec", cue: "Santé de l'épaule droite.", dbName: "External rotation" },
                     { name: "Band Side Steps + Clamshells", sets: "3 × 15", restSec: 45, restText: "Repos 45 sec", cue: "Correction du valgus des genoux.", dbName: "Clamshell" }
                 ],
-                muscles: ["epaules", "fessiers"]
+                muscles: ["front-deltoids", "gluteal", "upper-back"]
             },
             "boxeur": {
                 title: "Section Boxeur / MMA",
@@ -532,37 +615,33 @@
                     { name: "Conditioning court et intelligent", sets: "Intervalles haute intensité", restSec: 60, restText: "Récupération active", cue: "Cardio spécifique sports de combat.", dbName: "Sprinting" },
                     { name: "Renforcement du cou", sets: "2-3 séries", restSec: 60, restText: "Repos 60 sec", cue: "Si matériel disponible (sécurité cervicale MMA).", dbName: "Neck extension" }
                 ],
-                muscles: ["quadriceps", "abdos", "trapézes"]
+                muscles: ["quadriceps", "abs", "trapezius", "gluteal", "calves"]
             }
         };
 
+        const muscleFrenchNames = {
+            'chest': 'Pectoraux',
+            'front-deltoids': 'Épaules (Avant)',
+            'back-deltoids': 'Épaules (Arrière)',
+            'biceps': 'Biceps',
+            'triceps': 'Triceps',
+            'forearm': 'Avant-bras',
+            'abs': 'Abdos / Core',
+            'obliques': 'Obliques',
+            'quadriceps': 'Quadriceps',
+            'hamstring': 'Ischio-jambiers',
+            'calves': 'Mollets',
+            'gluteal': 'Fessiers',
+            'trapezius': 'Trapèzes',
+            'upper-back': 'Haut du Dos',
+            'lower-back': 'Bas du Dos'
+        };
+
         // État global
-        let currentMuscleView = 'face';
-        let selectedMuscleKey = null;
+        let currentMuscleView = 'anterior';
         let freeExercisesDB = [];
         let shoulderSafetyMode = true;
         let activeTimer = null;
-
-        // Données d'anatomie SVG (coordonnées des polygones/paths pour chaque muscle Face / Dos)
-        const musclePaths = {
-            face: [
-                { key: 'pectoraux', name: 'Pectoraux', path: 'M75 85 Q100 80 125 85 L120 120 Q100 125 80 120 Z' },
-                { key: 'epaules', name: 'Épaules', path: 'M60 78 Q72 75 78 88 L65 110 Q58 95 60 78 Z M140 78 Q128 75 122 88 L135 110 Q142 95 140 78 Z' },
-                { key: 'biceps', name: 'Biceps', path: 'M55 115 L62 110 L68 140 L58 145 Z M145 115 L138 110 L132 140 L142 145 Z' },
-                { key: 'avant-bras', name: 'Avant-bras', path: 'M55 150 L58 145 L65 185 L52 182 Z M145 150 L142 145 L135 185 L148 182 Z' },
-                { key: 'abdos', name: 'Abdos / Core', path: 'M83 125 L117 125 L115 170 L85 170 Z' },
-                { key: 'quadriceps', name: 'Quadriceps', path: 'M78 185 L112 185 L118 270 L82 270 Z' },
-                { key: 'mollets', name: 'Mollets', path: 'M84 285 L110 285 L106 350 L88 350 Z' }
-            ],
-            back: [
-                { key: 'trapezes', name: 'Trapèzes', path: 'M88 65 L112 65 L125 90 L100 110 L75 90 Z' },
-                { key: 'dos', name: 'Grand Dorsal / Dos', path: 'M75 95 L100 115 L125 95 L135 145 L100 165 L65 145 Z' },
-                { key: 'triceps', name: 'Triceps', path: 'M55 115 L62 110 L68 140 L58 145 Z M145 115 L138 110 L132 140 L142 145 Z' },
-                { key: 'fessiers', name: 'Fessiers', path: 'M75 175 L125 175 L120 215 L80 215 Z' },
-                { key: 'ischio-jambiers', name: 'Ischio-jambiers', path: 'M79 225 L118 225 L115 270 L82 270 Z' },
-                { key: 'mollets', name: 'Mollets', path: 'M84 285 L110 285 L106 350 L88 350 Z' }
-            ]
-        };
 
         // Charger free-exercise-db au démarrage
         async function loadExerciseDB() {
@@ -588,76 +667,67 @@
             const activeNav = document.getElementById(`nav-${tabId}`);
             if (activeNav) activeNav.className = "flex flex-col items-center gap-1 text-white";
 
-            if (tabId === 'accueil') renderMuscleMap();
+            if (tabId === 'accueil') {
+                if (window.initApexBodyMap) window.initApexBodyMap(currentMuscleView);
+                checkLegsLagging();
+            }
             if (tabId === 'seances') renderSeancesHome();
             if (tabId === 'suivi') renderWeightChart();
         }
 
-        // --- 1. CARTE MUSCULAIRE VIVANTE ---
+        // --- 1. CARTE MUSCULAIRE VIVANTE (body-highlighter) ---
         function setMuscleView(view) {
             currentMuscleView = view;
-            document.getElementById('btn-view-face').className = view === 'face' ? "px-3 py-1 rounded-lg bg-white/10 text-white font-semibold" : "px-3 py-1 rounded-lg text-gray-400";
-            document.getElementById('btn-view-back').className = view === 'back' ? "px-3 py-1 rounded-lg bg-white/10 text-white font-semibold" : "px-3 py-1 rounded-lg text-gray-400";
-            renderMuscleMap();
+            document.getElementById('btn-view-face').className = view === 'anterior' ? "px-3 py-1 rounded-lg bg-white/10 text-white font-semibold" : "px-3 py-1 rounded-lg text-gray-400";
+            document.getElementById('btn-view-back').className = view === 'posterior' ? "px-3 py-1 rounded-lg bg-white/10 text-white font-semibold" : "px-3 py-1 rounded-lg text-gray-400";
+            if (window.updateBodyMap) window.updateBodyMap(view);
         }
 
-        function renderMuscleMap() {
-            const group = document.getElementById('interactive-muscles');
-            group.innerHTML = '';
-            const paths = musclePaths[currentMuscleView];
-            const logs = JSON.parse(localStorage.getItem('apex_muscle_logs') || '{}');
-            const now = Date.now();
-
-            let totalWorked = 0;
-            paths.forEach(m => {
-                const lastTime = logs[m.key] || 0;
-                const diffHours = lastTime ? (now - lastTime) / (1000 * 60 * 60) : 9999;
-                if (diffHours < 168) totalWorked++;
-
-                let fillColor = '#3f3f46'; // Gris par défaut (jamais ou >7j)
-                let pulseClass = '';
-
-                if (diffHours < 24) {
-                    fillColor = '#ef4444'; // Rouge vif
-                    pulseClass = 'muscle-pulse';
-                } else if (diffHours < 48) {
-                    fillColor = '#dc2626'; // Rouge
-                } else if (diffHours < 72) {
-                    fillColor = '#f97316'; // Orange
-                } else if (diffHours >= 72) {
-                    fillColor = '#10b981'; // Vert (récupéré)
-                }
-
-                const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                pathEl.setAttribute("d", m.path);
-                pathEl.setAttribute("fill", fillColor);
-                pathEl.setAttribute("stroke", "#ffffff");
-                pathEl.setAttribute("stroke-width", "0.8");
-                pathEl.setAttribute("class", `cursor-pointer transition-all hover:opacity-80 ${pulseClass}`);
-                pathEl.onclick = () => selectMuscle(m.key, m.name, lastTime);
-                group.appendChild(pathEl);
-            });
-
-            const completionRate = Math.min(100, Math.round((totalWorked / 8) * 100));
-            document.getElementById('weekly-completion-rate').innerText = `${completionRate}%`;
-        }
-
-        function selectMuscle(key, name, lastTime) {
-            selectedMuscleKey = key;
+        window.handleMuscleClickGlobal = function(stats) {
+            const rawMuscle = stats.muscle;
+            const name = muscleFrenchNames[rawMuscle] || rawMuscle;
+            
             document.getElementById('selected-muscle-title').innerText = name;
             document.getElementById('selected-muscle-details').classList.remove('hidden');
-            
+
+            const logs = JSON.parse(localStorage.getItem('apex_muscle_logs') || '{}');
+            const lastTime = logs[rawMuscle] || 0;
             const now = Date.now();
             const diffDays = lastTime ? Math.round((now - lastTime) / (1000 * 60 * 60 * 24)) : null;
+
             document.getElementById('m-last-date').innerText = diffDays !== null ? `Il y a ${diffDays} jour(s)` : 'Jamais enregistré';
-            
-            const volume = localStorage.getItem(`apex_vol_${key}`) || '0 kg';
+            const volume = localStorage.getItem(`apex_vol_${rawMuscle}`) || '0 kg';
             document.getElementById('m-volume').innerText = volume;
 
             let advice = 'Muscle bien récupéré, prêt pour une séance intense.';
             if (diffDays !== null && diffDays < 2) advice = 'En phase de récupération (synthèse protéique active).';
-            if (key === 'quadriceps' || key === 'ischio-jambiers') advice += ' ⚠️ Focus jambes robustes & anti-valgus requis.';
+            if (['quadriceps', 'hamstring', 'gluteal', 'calves'].includes(rawMuscle)) {
+                advice += ' ⚠️ Focus jambes robustes & anti-valgus requis (genoux vers l\'extérieur).';
+            }
             document.getElementById('m-advice').innerText = advice;
+        };
+
+        function checkLegsLagging() {
+            const logs = JSON.parse(localStorage.getItem('apex_muscle_logs') || '{}');
+            const now = Date.now();
+            const legMuscles = ['quadriceps', 'hamstring', 'gluteal', 'calves'];
+            let lagging = false;
+            legMuscles.forEach(m => {
+                const last = logs[m] || 0;
+                if (!last || (now - last) > 4 * 24 * 60 * 60 * 1000) {
+                    lagging = true;
+                }
+            });
+            const alertEl = document.getElementById('lagging-legs-alert');
+            if (alertEl) {
+                if (lagging) {
+                    alertEl.innerHTML = `⚠️ Point faible prioritaire : <strong>Jambes & Valgus en retard</strong>. Priorise une séance Cuisses/Fessiers !`;
+                    alertEl.className = "text-rose-300 font-medium bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20";
+                } else {
+                    alertEl.innerHTML = `✅ Focus jambes robustes & anti-valgus bien respecté cette semaine.`;
+                    alertEl.className = "text-emerald-300 font-medium bg-emerald-500/10 p-2.5 rounded-xl border border-emerald-500/20";
+                }
+            }
         }
 
         // --- 2. SÉANCES & DÉTAIL ---
@@ -721,10 +791,8 @@
                     savedSets = JSON.parse(localStorage.getItem(`apex_sets_${key}_${index}`)) || [];
                 } catch(e) { savedSets = []; }
 
-                // Matching free-exercise-db
                 const matchedEx = freeExercisesDB.find(item => item.name.toLowerCase().includes(ex.dbName.toLowerCase())) || null;
-                const primaryMuscles = matchedEx ? matchedEx.primaryMuscles : (workout.muscles || []);
-                const secondaryMuscles = matchedEx ? matchedEx.secondaryMuscles : [];
+                const primaryMuscles = matchedEx ? matchedEx.primaryMuscles : workout.muscles;
 
                 html += `
                     <div class="glass-card p-5 rounded-3xl space-y-4 border border-white/5">
@@ -741,7 +809,7 @@
                             </div>
                         </div>
 
-                        <!-- Visuels Exercice (Photos ou Silhouette SVG) -->
+                        <!-- Visuels Exercice -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-dark-700/40 p-4 rounded-2xl border border-white/5">
                             <div class="flex items-center justify-center bg-black/40 h-36 rounded-xl overflow-hidden relative" id="media_ex_${key}_${index}">
                                 ${matchedEx && matchedEx.images && matchedEx.images.length > 0 ? 
@@ -788,9 +856,9 @@
                         <div class="bg-black/40 p-2 rounded-xl border border-white/10 flex items-center justify-between gap-2">
                             <span class="text-xs font-medium text-gray-400 w-16">Série ${s + 1}</span>
                             <div class="flex items-center gap-1.5 flex-1">
-                                <input type="number" step="0.5" placeholder="kg" value="${setObj.weight}" oninput="saveSetData('${key}', ${index}, ${s}, this)" class="w-full bg-dark-700 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white set-w-${key}-${index}">
+                                <input type="number" step="0.5" placeholder="kg" value="${setObj.weight}" oninput="saveSetData('${key}', ${index}, ${s}, this)" class="w-full bg-dark-700 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white">
                                 <span class="text-gray-500">×</span>
-                                <input type="number" placeholder="reps" value="${setObj.reps}" oninput="saveSetData('${key}', ${index}, ${s}, this)" class="w-full bg-dark-700 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white set-r-${key}-${index}">
+                                <input type="number" placeholder="reps" value="${setObj.reps}" oninput="saveSetData('${key}', ${index}, ${s}, this)" class="w-full bg-dark-700 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white">
                             </div>
                         </div>
                     `;
@@ -806,7 +874,6 @@
             html += `</div>`;
             content.innerHTML = html;
 
-            // Alternance d'images free-exercise-db toutes les 1.2s si dispo
             workout.exercises.forEach((ex, index) => {
                 const matchedEx = freeExercisesDB.find(item => item.name.toLowerCase().includes(ex.dbName.toLowerCase()));
                 if (matchedEx && matchedEx.images && matchedEx.images.length > 1) {
@@ -824,7 +891,6 @@
 
         function saveSetData(key, exerciseIndex, setIndex, el) {
             const container = document.getElementById(`sets_list_${key}_${index}`);
-            // Recueillir toutes les séries
             let setsData = [];
             const rows = container.querySelectorAll('.bg-black\\/40');
             rows.forEach(row => {
@@ -837,34 +903,32 @@
         function addExerciseSet(key, exerciseIndex) {
             let savedSets = [];
             try {
-                savedSets = JSON.parse(localStorage.getItem(`apex_sets_${key}_${index}`)) || [];
+                savedSets = JSON.parse(localStorage.getItem(`apex_sets_${key}_${exerciseIndex}`)) || [];
             } catch(e) {}
             savedSets.push({ weight: '', reps: '' });
             localStorage.setItem(`apex_sets_${key}_${exerciseIndex}`, JSON.stringify(savedSets));
-            openWorkoutDetail(key); // Recharger
+            openWorkoutDetail(key);
         }
 
         function completeWorkoutSession(key) {
             const workout = workoutsData[key];
             const logs = JSON.parse(localStorage.getItem('apex_muscle_logs') || '{}');
+            const now = Date.now();
             workout.muscles.forEach(m => {
-                logs[m] = Date.now();
+                logs[m] = now;
             });
             localStorage.setItem('apex_muscle_logs', JSON.stringify(logs));
             alert('Séance validée et enregistrée ! Carte musculaire mise à jour.');
             switchTab('accueil');
         }
 
-        // --- TIMER DE REPOS MANUEL (Countdown / Stopwatch) ---
+        // --- TIMER DE REPOS MANUEL ---
         function startManualTimer(presetSec) {
             const bar = document.getElementById('rest-timer-bar');
             bar.classList.remove('hidden');
             if (activeTimer) clearInterval(activeTimer);
 
             let seconds = 0;
-            let mode = 'countdown'; // ou stopwatch
-            let target = presetSec;
-
             document.getElementById('timer-mode-label').innerText = `Repos (Cible ${presetSec}s)`;
 
             activeTimer = setInterval(() => {
@@ -903,7 +967,6 @@
 
             ctx.clearRect(0, 0, width, height);
 
-            // Grille
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
             ctx.lineWidth = 1;
             for (let i = 0; i < height; i += 30) {
@@ -913,7 +976,6 @@
                 ctx.stroke();
             }
 
-            // Ligne de poids
             ctx.strokeStyle = '#10b981';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -1053,7 +1115,8 @@
         // Initialisation
         window.addEventListener('DOMContentLoaded', async () => {
             await loadExerciseDB();
-            renderMuscleMap();
+            if (window.initApexBodyMap) window.initApexBodyMap(currentMuscleView);
+            checkLegsLagging();
             renderPhotos();
             updateReadinessUI();
         });
