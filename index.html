@@ -389,6 +389,19 @@
         </div>
     </div>
 
+    <!-- Modal "Changer de GIF" -->
+    <div id="gif-picker-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 space-y-4 border border-white/10 animate-fade-in max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center">
+                <h3 id="gif-picker-title" class="text-base font-bold text-white">Sélectionner un GIF</h3>
+                <button onclick="closeGifPickerModal()" class="text-gray-400 hover:text-white text-sm font-bold px-2 py-1">✕</button>
+            </div>
+            <div id="gif-picker-list" class="space-y-3 overflow-y-auto flex-1 pr-1">
+                <p class="text-xs text-gray-400 text-center py-4">Chargement des GIFs...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Timer de Repos Flottant Apple -->
     <div id="rest-timer-bar" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 glass-panel px-6 py-3.5 rounded-full border border-white/20 shadow-2xl flex items-center gap-4 hidden animate-fade-in">
         <div class="flex items-center gap-3">
@@ -411,10 +424,10 @@
                 title: "Pectoraux",
                 subtitle: "Pecs bombés, densité centrale & protection épaule",
                 exercises: [
-                    { name: "Développé incliné haltères 30°", sets: "4 × 8-10", restSec: 120, restText: "Repos 2 min", cue: "Descente en 3 secondes, pause 1 sec en bas, coudes à 45°.", dbName: "Incline dumbbell press" },
-                    { name: "Développé plat haltères ou machine/Smith", sets: "3 × 8-10", restSec: 105, restText: "Repos 90-120 sec", cue: "Machine ou Smith recommandée si douleur épaule droite présente.", dbName: "Bench press" },
-                    { name: "Écarté incliné haltères", sets: "3 × 10-12", restSec: 75, restText: "Repos 75-90 sec", cue: "Contrôle strict de l'étirement en haut de mouvement.", dbName: "Incline fly" },
-                    { name: "Écarté poulie hauteur moyenne (Crossover)", sets: "3 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Contraction forte au milieu de la poitrine.", dbName: "Cable crossover" }
+                    { name: "Développé incliné haltères 30°", sets: "4 × 8-10", restSec: 120, restText: "Repos 2 min", cue: "Descente en 3 secondes, pause 1 sec en bas, coudes à 45°.", dbName: "incline dumbbell press" },
+                    { name: "Développé plat haltères ou machine/Smith", sets: "3 × 8-10", restSec: 105, restText: "Repos 90-120 sec", cue: "Machine ou Smith recommandée si douleur épaule droite présente.", dbName: "dumbbell bench press" },
+                    { name: "Écarté incliné haltères", sets: "3 × 10-12", restSec: 75, restText: "Repos 75-90 sec", cue: "Contrôle strict de l'étirement en haut de mouvement.", dbName: "incline dumbbell fly" },
+                    { name: "Écarté poulie hauteur moyenne (Crossover)", sets: "3 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Contraction forte au milieu de la poitrine.", dbName: "cable cross-over" }
                 ],
                 muscles: ["chest", "front-deltoids", "triceps"]
             },
@@ -422,12 +435,12 @@
                 title: "Dos + Posture",
                 subtitle: "Épaisseur, largeur & correction épaules en avant",
                 exercises: [
-                    { name: "Lat Pulldown ou Tractions", sets: "4 × 8-12", restSec: 120, restText: "Repos 2 min", cue: "Tirer avec les coudes vers le bas, poitrine bombée.", dbName: "Lat pulldown" },
-                    { name: "Row horizontal (haltères ou machine)", sets: "4 × 8-12", restSec: 105, restText: "Repos 90-120 sec", cue: "Pause 1-2 secondes omoplates serrées.", dbName: "Seated row" },
-                    { name: "Straight-arm pulldown", sets: "3 × 12-15", restSec: 75, restText: "Repos 75 sec", cue: "Isolation des grands dorsaux, bras tendus.", dbName: "Straight-arm pulldown" },
-                    { name: "Face Pull", sets: "3-4 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Essentiel pour la posture et la santé de la coiffe des rotateurs.", dbName: "Face pull" },
-                    { name: "Reverse fly ou Prone Y-T-W", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Renforcement haut du dos et correction des épaules en avant.", dbName: "Reverse fly" },
-                    { name: "Rotations externes élastique", sets: "2-3 × 12-15 par côté", restSec: 45, restText: "Repos 45 sec", cue: "Coude collé au corps, rotation externe contrôlée.", dbName: "External rotation" }
+                    { name: "Lat Pulldown ou Tractions", sets: "4 × 8-12", restSec: 120, restText: "Repos 2 min", cue: "Tirer avec les coudes vers le bas, poitrine bombée.", dbName: "cable lat pulldown" },
+                    { name: "Row horizontal (haltères ou machine)", sets: "4 × 8-12", restSec: 105, restText: "Repos 90-120 sec", cue: "Pause 1-2 secondes omoplates serrées.", dbName: "cable seated row" },
+                    { name: "Straight-arm pulldown", sets: "3 × 12-15", restSec: 75, restText: "Repos 75 sec", cue: "Isolation des grands dorsaux, bras tendus.", dbName: "cable straight arm pulldown" },
+                    { name: "Face Pull", sets: "3-4 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Essentiel pour la posture et la santé de la coiffe des rotateurs.", dbName: "cable face pull" },
+                    { name: "Reverse fly ou Prone Y-T-W", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Renforcement haut du dos et correction des épaules en avant.", dbName: "dumbbell rear delt fly" },
+                    { name: "Rotations externes élastique", sets: "2-3 × 12-15 par côté", restSec: 45, restText: "Repos 45 sec", cue: "Coude collé au corps, rotation externe contrôlée.", dbName: "cable external rotation" }
                 ],
                 muscles: ["upper-back", "lower-back", "back-deltoids", "biceps"]
             },
@@ -435,12 +448,12 @@
                 title: "Jambes (Cuisses) — Style Boxeur",
                 subtitle: "Robustesse, épaisseur & correction valgus",
                 exercises: [
-                    { name: "Band Side Steps", sets: "3 × 12-15 pas chaque côté", restSec: 60, restText: "Repos 60 sec", cue: "Élastique au-dessus des genoux, active les fessiers moyens (anti-valgus).", dbName: "Lateral walk" },
-                    { name: "Hip Thrust (machine)", sets: "4 × 8-12", restSec: 90, restText: "Repos 90 sec", cue: "Pause 1 seconde en haut, contraction maximale des fessiers.", dbName: "Hip thrust" },
-                    { name: "Leg Press ou Hack Squat", sets: "4 × 8-12", restSec: 120, restText: "Repos 2 min", cue: "GENOUX POUSSÉS VERS L'EXTÉRIEUR en permanence, pieds milieu/bas.", dbName: "Leg press" },
-                    { name: "Bulgarian Split Squat (Smith de préférence)", sets: "3-4 × 8-10 par jambe", restSec: 90, restText: "Repos 90 sec", cue: "Genou avant stable et aligné, ne rentre jamais vers l'intérieur.", dbName: "Bulgarian split squat" },
-                    { name: "Romanian Deadlift", sets: "3 × 8-10", restSec: 90, restText: "Repos 90 sec", cue: "Étirement fort des ischio-jambiers, hanches vers l'arrière.", dbName: "Romanian deadlift" },
-                    { name: "Leg Curl", sets: "3 × 10-12", restSec: 60, restText: "Repos 60 sec", cue: "Contrôle excentrique strict.", dbName: "Leg curl" }
+                    { name: "Band Side Steps", sets: "3 × 12-15 pas chaque côté", restSec: 60, restText: "Repos 60 sec", cue: "Élastique au-dessus des genoux, active les fessiers moyens (anti-valgus).", dbName: "band lateral walk" },
+                    { name: "Hip Thrust (machine)", sets: "4 × 8-12", restSec: 90, restText: "Repos 90 sec", cue: "Pause 1 seconde en haut, contraction maximale des fessiers.", dbName: "barbell hip thrust" },
+                    { name: "Leg Press ou Hack Squat", sets: "4 × 8-12", restSec: 120, restText: "Repos 2 min", cue: "GENOUX POUSSÉS VERS L'EXTÉRIEUR en permanence, pieds milieu/bas.", dbName: "sled 45 leg press" },
+                    { name: "Bulgarian Split Squat (Smith de préférence)", sets: "3-4 × 8-10 par jambe", restSec: 90, restText: "Repos 90 sec", cue: "Genou avant stable et aligné, ne rentre jamais vers l'intérieur.", dbName: "bulgarian split squat" },
+                    { name: "Romanian Deadlift", sets: "3 × 8-10", restSec: 90, restText: "Repos 90 sec", cue: "Étirement fort des ischio-jambiers, hanches vers l'arrière.", dbName: "barbell romanian deadlift" },
+                    { name: "Leg Curl", sets: "3 × 10-12", restSec: 60, restText: "Repos 60 sec", cue: "Contrôle excentrique strict.", dbName: "lever lying leg curl" }
                 ],
                 muscles: ["quadriceps", "gluteal", "hamstring", "calves"]
             },
@@ -448,7 +461,7 @@
                 title: "Fessiers",
                 subtitle: "Puissance & robustesse du bas du corps",
                 exercises: [
-                    { name: "Hip Thrust lourd", sets: "4 × 8-12", restSec: 120, restText: "Repos 2 min", cue: "Exercice principal pour fessiers bombés et robustes. Extension complète du bassin.", dbName: "Barbell hip thrust" }
+                    { name: "Hip Thrust lourd", sets: "4 × 8-12", restSec: 120, restText: "Repos 2 min", cue: "Exercice principal pour fessiers bombés et robustes. Extension complète du bassin.", dbName: "barbell hip thrust" }
                 ],
                 muscles: ["gluteal", "hamstring"]
             },
@@ -456,8 +469,8 @@
                 title: "Mollets",
                 subtitle: "Volume & densité jambe de boxeur",
                 exercises: [
-                    { name: "Standing Calf Raise", sets: "4-5 × 10-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Amplitude complète, pause 1-2 secondes en bas, contraction en haut.", dbName: "Standing calf raise" },
-                    { name: "Seated Calf Raise", sets: "3-4 × 12-20", restSec: 60, restText: "Repos 60 sec", cue: "Cible le soléaire pour l'épaisseur de la jambe.", dbName: "Seated calf raise" }
+                    { name: "Standing Calf Raise", sets: "4-5 × 10-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Amplitude complète, pause 1-2 secondes en bas, contraction en haut.", dbName: "standing calf raise" },
+                    { name: "Seated Calf Raise", sets: "3-4 × 12-20", restSec: 60, restText: "Repos 60 sec", cue: "Cible le soléaire pour l'épaisseur de la jambe.", dbName: "lever seated calf raise" }
                 ],
                 muscles: ["calves"]
             },
@@ -465,9 +478,9 @@
                 title: "Avant-bras / Poignets",
                 subtitle: "Poigne de fer & stabilité",
                 exercises: [
-                    { name: "Wrist Curl (paumes vers le haut)", sets: "4 × 15-20", restSec: 60, restText: "Repos 60 sec", cue: "Flexion complète des poignets.", dbName: "Wrist curl" },
-                    { name: "Reverse Wrist Curl (paumes vers le bas)", sets: "4 × 15-20", restSec: 60, restText: "Repos 60 sec", cue: "Renforcement extenseurs et avant-bras.", dbName: "Reverse wrist curl" },
-                    { name: "Farmer's Walk ou holds lourds", sets: "3 × 30-40 secondes", restSec: 90, restText: "Repos 90 sec", cue: "Marche avec charges lourdes ou maintien statique maximal.", dbName: "Farmers walk" }
+                    { name: "Wrist Curl (paumes vers le haut)", sets: "4 × 15-20", restSec: 60, restText: "Repos 60 sec", cue: "Flexion complète des poignets.", dbName: "barbell wrist curl" },
+                    { name: "Reverse Wrist Curl (paumes vers le bas)", sets: "4 × 15-20", restSec: 60, restText: "Repos 60 sec", cue: "Renforcement extenseurs et avant-bras.", dbName: "barbell reverse wrist curl" },
+                    { name: "Farmer's Walk ou holds lourds", sets: "3 × 30-40 secondes", restSec: 90, restText: "Repos 90 sec", cue: "Marche avec charges lourdes ou maintien statique maximal.", dbName: "farmers walk" }
                 ],
                 muscles: ["forearm"]
             },
@@ -475,10 +488,10 @@
                 title: "Épaules",
                 subtitle: "Largeur athlétique & préservation coiffe",
                 exercises: [
-                    { name: "Élévations latérales", sets: "4 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Conduite par les coudes, léger penché vers l'avant.", dbName: "Lateral raise" },
-                    { name: "Face Pull", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Posture et santé articulaire.", dbName: "Face pull" },
-                    { name: "Développé militaire ou machine", sets: "3 × 8-10", restSec: 105, restText: "Repos 90-120 sec", cue: "Attention épaule droite : adapter l'amplitude si besoin.", dbName: "Military press" },
-                    { name: "Reverse fly", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Faisceau postérieur de l'épaule.", dbName: "Reverse fly" }
+                    { name: "Élévations latérales", sets: "4 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Conduite par les coudes, léger penché vers l'avant.", dbName: "dumbbell lateral raise" },
+                    { name: "Face Pull", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Posture et santé articulaire.", dbName: "cable face pull" },
+                    { name: "Développé militaire ou machine", sets: "3 × 8-10", restSec: 105, restText: "Repos 90-120 sec", cue: "Attention épaule droite : adapter l'amplitude si besoin.", dbName: "dumbbell shoulder press" },
+                    { name: "Reverse fly", sets: "3 × 12-15", restSec: 60, restText: "Repos 60 sec", cue: "Faisceau postérieur de l'épaule.", dbName: "dumbbell rear delt fly" }
                 ],
                 muscles: ["front-deltoids", "back-deltoids", "trapezius"]
             },
@@ -486,9 +499,9 @@
                 title: "Biceps",
                 subtitle: "Densité & bras fonctionnels",
                 exercises: [
-                    { name: "Curl barre ou haltères", sets: "3-4 × 8-12", restSec: 90, restText: "Repos 90 sec", cue: "Stabilité du tronc, pas d'élan.", dbName: "Biceps curl" },
-                    { name: "Curl marteau", sets: "3 × 10-12", restSec: 75, restText: "Repos 75 sec", cue: "Cible le brachial et l'avant-bras.", dbName: "Hammer curl" },
-                    { name: "Curl incliné", sets: "3 × 10-12", restSec: 75, restText: "Repos 75 sec", cue: "Étirement intense du chef long du biceps.", dbName: "Incline dumbbell curl" }
+                    { name: "Curl barre ou haltères", sets: "3-4 × 8-12", restSec: 90, restText: "Repos 90 sec", cue: "Stabilité du tronc, pas d'élan.", dbName: "barbell curl" },
+                    { name: "Curl marteau", sets: "3 × 10-12", restSec: 75, restText: "Repos 75 sec", cue: "Cible le brachial et l'avant-bras.", dbName: "dumbbell hammer curl" },
+                    { name: "Curl incliné", sets: "3 × 10-12", restSec: 75, restText: "Repos 75 sec", cue: "Étirement intense du chef long du biceps.", dbName: "dumbbell incline curl" }
                 ],
                 muscles: ["biceps"]
             },
@@ -496,9 +509,9 @@
                 title: "Triceps",
                 subtitle: "Volume & puissance de frappe",
                 exercises: [
-                    { name: "Extension poulie", sets: "3-4 × 10-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Coudes fixes le long du corps.", dbName: "Triceps pushdown" },
-                    { name: "Dips (assistés si besoin)", sets: "3 × 8-12", restSec: 90, restText: "Repos 90 sec", cue: "Buste légèrement penché pour engager les triceps et bas des pectoraux.", dbName: "Dips" },
-                    { name: "Extension haltère au-dessus de la tête", sets: "3 × 10-12", restSec: 75, restText: "Repos 75 sec", cue: "Étirement complet du chef long.", dbName: "Overhead triceps extension" }
+                    { name: "Extension poulie", sets: "3-4 × 10-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Coudes fixes le long du corps.", dbName: "cable pushdown" },
+                    { name: "Dips (assistés si besoin)", sets: "3 × 8-12", restSec: 90, restText: "Repos 90 sec", cue: "Buste légèrement penché pour engager les triceps et bas des pectoraux.", dbName: "triceps dip" },
+                    { name: "Extension haltère au-dessus de la tête", sets: "3 × 10-12", restSec: 75, restText: "Repos 75 sec", cue: "Étirement complet du chef long.", dbName: "dumbbell seated triceps extension" }
                 ],
                 muscles: ["triceps"]
             },
@@ -506,9 +519,9 @@
                 title: "Abdos / Core",
                 subtitle: "Gainage d'acier & résistance aux impacts",
                 exercises: [
-                    { name: "Hanging Leg Raises", sets: "3 × 10-15", restSec: 75, restText: "Repos 75 sec", cue: "Contrôle du balancement, enroulement du bassin.", dbName: "Hanging leg raise" },
-                    { name: "Cable Crunch", sets: "3 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Flexion vertébrale maximale.", dbName: "Cable crunch" },
-                    { name: "Side Plank ou Pallof Press", sets: "3 × 30-45 sec par côté", restSec: 60, restText: "Repos 60 sec", cue: "Anti-rotation et stabilité latérale.", dbName: "Pallof press" }
+                    { name: "Hanging Leg Raises", sets: "3 × 10-15", restSec: 75, restText: "Repos 75 sec", cue: "Contrôle du balancement, enroulement du bassin.", dbName: "hanging leg raise" },
+                    { name: "Cable Crunch", sets: "3 × 12-15", restSec: 60, restText: "Repos 60-75 sec", cue: "Flexion vertébrale maximale.", dbName: "cable kneeling crunch" },
+                    { name: "Side Plank ou Pallof Press", sets: "3 × 30-45 sec par côté", restSec: 60, restText: "Repos 60 sec", cue: "Anti-rotation et stabilité latérale.", dbName: "cable pallof press" }
                 ],
                 muscles: ["abs", "obliques"]
             },
@@ -516,10 +529,10 @@
                 title: "Mobilité & Correction",
                 subtitle: "Posture, santé articulaire & valgus",
                 exercises: [
-                    { name: "Doorway Chest Stretch", sets: "2 × 30-45 sec par côté", restSec: 45, restText: "Repos 45 sec", cue: "Ouverture de la cage thoracique, correction des épaules en avant.", dbName: "Chest stretch" },
-                    { name: "Wall Slides / Wall Angels", sets: "2-3 × 10-12", restSec: 45, restText: "Repos 45 sec", cue: "Travail omoplates et posture haute.", dbName: "Wall slide" },
-                    { name: "Rotations externes élastique", sets: "2-3 × 12-15", restSec: 45, restText: "Repos 45 sec", cue: "Santé de l'épaule droite.", dbName: "External rotation" },
-                    { name: "Band Side Steps + Clamshells", sets: "3 × 15", restSec: 45, restText: "Repos 45 sec", cue: "Correction du valgus des genoux.", dbName: "Clamshell" }
+                    { name: "Doorway Chest Stretch", sets: "2 × 30-45 sec par côté", restSec: 45, restText: "Repos 45 sec", cue: "Ouverture de la cage thoracique, correction des épaules en avant.", dbName: "chest stretch" },
+                    { name: "Wall Slides / Wall Angels", sets: "2-3 × 10-12", restSec: 45, restText: "Repos 45 sec", cue: "Travail omoplates et posture haute.", dbName: "wall slide" },
+                    { name: "Rotations externes élastique", sets: "2-3 × 12-15", restSec: 45, restText: "Repos 45 sec", cue: "Santé de l'épaule droite.", dbName: "cable external rotation" },
+                    { name: "Band Side Steps + Clamshells", sets: "3 × 15", restSec: 45, restText: "Repos 45 sec", cue: "Correction du valgus des genoux.", dbName: "clamshell" }
                 ],
                 muscles: ["front-deltoids", "gluteal", "upper-back"]
             },
@@ -527,11 +540,11 @@
                 title: "Section Boxeur / MMA",
                 subtitle: "Force fonctionnelle, explosivité & conditioning",
                 exercises: [
-                    { name: "Force fonctionnelle (Goblet Squat, Farmer's Walk, Landmine)", sets: "3-4 séries", restSec: 90, restText: "Repos 90 sec", cue: "Transfert de force et ancrage au sol.", dbName: "Goblet squat" },
-                    { name: "Puissance (Kettlebell Swing, Medicine Ball Slam)", sets: "4 séries de 10-12", restSec: 60, restText: "Repos 60 sec", cue: "Explosivité de la chaîne triple extension et du buste.", dbName: "Kettlebell swing" },
-                    { name: "Core anti-rotation et anti-flexion", sets: "3 séries", restSec: 60, restText: "Repos 60 sec", cue: "Résistance aux chocs et robustesse du tronc.", dbName: "Pallof press" },
-                    { name: "Conditioning court et intelligent", sets: "Intervalles haute intensité", restSec: 60, restText: "Récupération active", cue: "Cardio spécifique sports de combat.", dbName: "Sprinting" },
-                    { name: "Renforcement du cou", sets: "2-3 séries", restSec: 60, restText: "Repos 60 sec", cue: "Si matériel disponible (sécurité cervicale MMA).", dbName: "Neck extension" }
+                    { name: "Force fonctionnelle (Goblet Squat, Farmer's Walk, Landmine)", sets: "3-4 séries", restSec: 90, restText: "Repos 90 sec", cue: "Transfert de force et ancrage au sol.", dbName: "dumbbell goblet squat" },
+                    { name: "Puissance (Kettlebell Swing, Medicine Ball Slam)", sets: "4 séries de 10-12", restSec: 60, restText: "Repos 60 sec", cue: "Explosivité de la chaîne triple extension et du buste.", dbName: "kettlebell swing" },
+                    { name: "Core anti-rotation et anti-flexion", sets: "3 séries", restSec: 60, restText: "Repos 60 sec", cue: "Résistance aux chocs et robustesse du tronc.", dbName: "cable pallof press" },
+                    { name: "Conditioning court et intelligent", sets: "Intervalles haute intensité", restSec: 60, restText: "Récupération active", cue: "Cardio spécifique sports de combat.", dbName: "sprinting" },
+                    { name: "Renforcement du cou", sets: "2-3 séries", restSec: 60, restText: "Repos 60 sec", cue: "Si matériel disponible (sécurité cervicale MMA).", dbName: "neck extension" }
                 ],
                 muscles: ["quadriceps", "abs", "trapezius", "gluteal", "calves"]
             }
@@ -569,8 +582,10 @@
         let activeTimer = null;
         let bodyChartInstance = null;
         let currentBodyState = {};
+        let activeGifPickerWorkoutKey = null;
+        let activeGifPickerIndex = null;
 
-        // Charger free-exercise-db au démarrage
+        // Charger free-exercise-db au démarrage (secours cascade 2)
         async function loadExerciseDB() {
             try {
                 const res = await fetch('https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json');
@@ -602,7 +617,7 @@
             if (tabId === 'suivi') renderWeightChart();
         }
 
-        // --- 1. CARTE MUSCULAIRE VIVANTE (Body Muscles Library Integration) ---
+        // --- 1. CARTE MUSCULAIRE VIVANTE ---
         function initApexBodyChart() {
             const container = document.getElementById('body-highlighter-container');
             if (!container) return;
@@ -686,16 +701,16 @@
                 }
 
                 path.classList.remove('muscle-pulse');
-                let color = '#3a3a3f'; // anthracite (0)
+                let color = '#3a3a3f';
                 if (intensity === 10) {
-                    color = '#ff2d2d'; // rouge vif + lueur
+                    color = '#ff2d2d';
                     path.classList.add('muscle-pulse');
                 } else if (intensity === 7) {
-                    color = '#c0392b'; // rouge (24-48h)
+                    color = '#c0392b';
                 } else if (intensity === 4) {
-                    color = '#e67e22'; // orange (48-72h)
+                    color = '#e67e22';
                 } else if (intensity === 2) {
-                    color = '#2ecc71'; // vert (72h+)
+                    color = '#2ecc71';
                 } else {
                     color = '#3a3a3f';
                 }
@@ -746,7 +761,6 @@
                 advice += ' ⚠️ Focus jambes robustes & anti-valgus requis (genoux vers l\'extérieur).';
             }
 
-            // Trouver 3 exercices recommandés et lien vers la séance
             let recommendedHtml = '';
             for (const [wKey, workout] of Object.entries(workoutsData)) {
                 if (workout.muscles.some(m => id.includes(m) || m.includes(matchedCategory))) {
@@ -797,6 +811,173 @@
                 }
             }
         }
+
+        // --- 3. EXERCISEDB V1 API FETCH & FALLBACK CASCADE ---
+        async function fetchExerciseDBV1(searchQuery) {
+            const cacheKey = `apex_exdb_v1_${searchQuery}`;
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) {
+                try { return JSON.parse(cached); } catch(e) {}
+            }
+            try {
+                const res = await fetch(`https://oss.exercisedb.dev/api/v1/exercises?search=${encodeURIComponent(searchQuery)}&limit=10`);
+                const json = await res.json();
+                let items = [];
+                if (Array.isArray(json)) items = json;
+                else if (json.data && Array.isArray(json.data)) items = json.data;
+                else if (json.exercises && Array.isArray(json.exercises)) items = json.exercises;
+
+                localStorage.setItem(cacheKey, JSON.stringify(items));
+                return items;
+            } catch(e) {
+                console.error("ExerciseDB V1 API error for query:", searchQuery, e);
+                return [];
+            }
+        }
+
+        // Gestionnaire d'erreur image GIF (Secours cascade)
+        function handleGifError(imgElement, workoutKey, exerciseIndex, dbName) {
+            const container = imgElement.parentElement;
+            if (!container) return;
+
+            // Secours 2: free-exercise-db photos avec fondu enchaîné
+            const matchedEx = freeExercisesDB.find(item => item.name.toLowerCase().includes(dbName.toLowerCase()));
+            if (matchedEx && matchedEx.images && matchedEx.images.length > 0) {
+                container.innerHTML = `<img src="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/${matchedEx.images[0]}" class="object-cover h-full w-full animate-fade-in" id="fallback_img_${workoutKey}_${exerciseIndex}">`;
+                if (matchedEx.images.length > 1) {
+                    let imgIdx = 0;
+                    setInterval(() => {
+                        const fbImg = document.getElementById(`fallback_img_${workoutKey}_${exerciseIndex}`);
+                        if (fbImg) {
+                            imgIdx = (imgIdx + 1) % matchedEx.images.length;
+                            fbImg.src = `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/${matchedEx.images[imgIdx]}`;
+                        }
+                    }, 1200);
+                }
+                return;
+            }
+
+            // Secours 3: Bouton YouTube
+            const exName = container.getAttribute('data-ex-name') || 'Exercice';
+            container.innerHTML = `
+                <div class="text-center p-2">
+                    <p class="text-[11px] text-gray-400 mb-2">Visuel indisponible</p>
+                    <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(exName)}" target="_blank" class="apple-button px-3 py-1.5 rounded-lg text-xs text-white">Voir démo YouTube</a>
+                </div>
+            `;
+        }
+
+        // Charger et injecter dynamiquement le meilleur GIF ou lien personnalisé
+        async function loadExerciseVisual(workoutKey, exerciseIndex, dbName, exName) {
+            const mediaContainer = document.getElementById(`media_ex_${workoutKey}_${exerciseIndex}`);
+            if (!mediaContainer) return;
+
+            mediaContainer.setAttribute('data-ex-name', exName);
+
+            // Vérifier si un lien personnalisé existe dans localStorage
+            const customLinkKey = `apex_custom_gif_${workoutKey}_${exerciseIndex}`;
+            const customLink = localStorage.getItem(customLinkKey);
+
+            if (customLink) {
+                renderMediaHTML(mediaContainer, customLink, [], workoutKey, exerciseIndex, dbName);
+                return;
+            }
+
+            // Appel API ExerciseDB V1
+            const results = await fetchExerciseDBV1(dbName);
+            if (results && results.length > 0 && results[0].gifUrl) {
+                const best = results[0];
+                renderMediaHTML(mediaContainer, best.gifUrl, best.targetMuscles || [], workoutKey, exerciseIndex, dbName);
+            } else {
+                // Déclencher le secours cascade
+                handleGifError({ parentElement: mediaContainer }, workoutKey, exerciseIndex, dbName);
+            }
+        }
+
+        function renderMediaHTML(container, gifUrl, targetMuscles, workoutKey, exerciseIndex, dbName) {
+            let tagsHtml = '';
+            if (Array.isArray(targetMuscles) && targetMuscles.length > 0) {
+                tagsHtml = `<div class="absolute bottom-1 left-1 right-1 flex flex-wrap gap-1 px-1 pointer-events-none">${targetMuscles.map(m => `<span class="bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-[9px] text-emerald-400 font-medium border border-white/10">${m}</span>`).join('')}</div>`;
+            }
+
+            container.innerHTML = `
+                <div class="relative w-full h-full flex items-center justify-center bg-black">
+                    <img src="${gifUrl}" loading="lazy" onerror="handleGifError(this, '${workoutKey}', ${exerciseIndex}, '${dbName}')" class="object-contain h-full w-full rounded-xl animate-fade-in">
+                    ${tagsHtml}
+                </div>
+            `;
+        }
+
+        // --- MODAL "CHANGER DE GIF" ---
+        async function openGifPicker(workoutKey, exerciseIndex, dbName, exName) {
+            activeGifPickerWorkoutKey = workoutKey;
+            activeGifPickerIndex = exerciseIndex;
+            document.getElementById('gif-picker-title').innerText = `Changer de GIF : ${exName}`;
+            document.getElementById('gif-picker-modal').classList.remove('hidden');
+
+            const listContainer = document.getElementById('gif-picker-list');
+            listContainer.innerHTML = `<p class="text-xs text-gray-400 text-center py-6 animate-pulse">Recherche des meilleurs GIFs sur ExerciseDB...</p>`;
+
+            // Champ pour lien personnalisé
+            let html = `
+                <div class="bg-dark-700/80 p-3 rounded-2xl border border-white/10 space-y-2">
+                    <label class="text-xs font-semibold text-white block">Lien GIF (optionnel) :</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="custom-gif-input" placeholder="https://..." class="flex-1 bg-black border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white">
+                        <button onclick="saveCustomGifLink()" class="apple-button px-3 py-1.5 rounded-xl text-xs font-semibold text-white">Appliquer</button>
+                    </div>
+                </div>
+                <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider pt-2">Top 5 Suggestions ExerciseDB V1</div>
+            `;
+
+            const results = await fetchExerciseDBV1(dbName);
+            const top5 = results.slice(0, 5);
+
+            if (top5.length === 0) {
+                html += `<p class="text-xs text-gray-400 text-center py-4">Aucun résultat trouvé via l'API.</p>`;
+            } else {
+                top5.forEach((item, idx) => {
+                    html += `
+                        <div onclick="selectGifSuggestion('${item.gifUrl}')" class="glass-card p-3 rounded-2xl flex items-center gap-4 cursor-pointer hover:border-emerald-500/50 transition-all">
+                            <div class="w-16 h-16 bg-black rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center border border-white/10">
+                                <img src="${item.gifUrl}" class="w-full h-full object-contain" loading="lazy">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
+                                <p class="text-[10px] text-gray-400 mt-0.5">Cible : ${Array.isArray(item.targetMuscles) ? item.targetMuscles.join(', ') : 'N/A'}</p>
+                            </div>
+                            <span class="text-xs font-semibold text-emerald-400">Choisir →</span>
+                        </div>
+                    `;
+                });
+            }
+
+            listContainer.innerHTML = html;
+        }
+
+        function closeGifPickerModal() {
+            document.getElementById('gif-picker-modal').classList.add('hidden');
+        }
+
+        function selectGifSuggestion(gifUrl) {
+            if (activeGifPickerWorkoutKey !== null && activeGifPickerIndex !== null) {
+                const customKey = `apex_custom_gif_${activeGifPickerWorkoutKey}_${activeGifPickerIndex}`;
+                localStorage.setItem(customKey, gifUrl);
+                closeGifPickerModal();
+                loadExerciseVisual(activeGifPickerWorkoutKey, activeGifPickerIndex, workoutsData[activeGifPickerWorkoutKey].exercises[activeGifPickerIndex].dbName, workoutsData[activeGifPickerWorkoutKey].exercises[activeGifPickerIndex].name);
+            }
+        }
+
+        function saveCustomGifLink() {
+            const inputVal = document.getElementById('custom-gif-input').value.trim();
+            if (inputVal && activeGifPickerWorkoutKey !== null && activeGifPickerIndex !== null) {
+                const customKey = `apex_custom_gif_${activeGifPickerWorkoutKey}_${activeGifPickerIndex}`;
+                localStorage.setItem(customKey, inputVal);
+                closeGifPickerModal();
+                loadExerciseVisual(activeGifPickerWorkoutKey, activeGifPickerIndex, workoutsData[activeGifPickerWorkoutKey].exercises[activeGifPickerIndex].dbName, workoutsData[activeGifPickerWorkoutKey].exercises[activeGifPickerIndex].name);
+            }
+        }
+
 
         // --- 2. SÉANCES & DÉTAIL ---
         function renderSeancesHome() {
@@ -860,9 +1041,6 @@
                     savedSets = JSON.parse(localStorage.getItem(`apex_sets_${key}_${index}`)) || [];
                 } catch(e) { savedSets = []; }
 
-                const matchedEx = freeExercisesDB.find(item => item.name.toLowerCase().includes(ex.dbName.toLowerCase())) || null;
-                const primaryMuscles = matchedEx ? matchedEx.primaryMuscles : workout.muscles;
-
                 html += `
                     <div class="glass-card p-5 rounded-3xl space-y-4 border border-white/5">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -878,21 +1056,25 @@
                             </div>
                         </div>
 
-                        <!-- Visuels Exercice -->
+                        <!-- Visuels Exercice (GIFs ExerciseDB V1 avec loader & bouton Changer de GIF) -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-dark-700/40 p-4 rounded-2xl border border-white/5">
-                            <div class="flex items-center justify-center bg-black/40 h-36 rounded-xl overflow-hidden relative" id="media_ex_${key}_${index}">
-                                ${matchedEx && matchedEx.images && matchedEx.images.length > 0 ? 
-                                    `<img src="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/${matchedEx.images[0]}" class="object-cover h-full w-full animate-fade-in" id="img_ex_${key}_${index}">` :
-                                    `<div class="text-center p-2"><p class="text-[11px] text-gray-400 mb-2">Illustration anatomique</p><a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name)}" target="_blank" class="apple-button px-3 py-1.5 rounded-lg text-xs text-white">Voir démo YouTube</a></div>`
-                                }
-                            </div>
-                            <div class="flex flex-col justify-center space-y-2 text-xs">
-                                <div class="bg-black/30 p-3 rounded-xl border border-white/5">
-                                    <strong class="text-white block mb-1">Cues Techniques :</strong>
-                                    <p class="text-gray-300 leading-relaxed">${ex.cue}</p>
+                            <div class="flex flex-col items-center justify-center bg-black/40 h-44 rounded-2xl overflow-hidden relative border border-white/5" id="media_ex_${key}_${index}">
+                                <div class="flex flex-col items-center justify-center h-full text-xs text-gray-400 space-y-2">
+                                    <div class="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <span>Chargement GIF...</span>
                                 </div>
-                                <div class="text-[11px] text-gray-400 flex flex-wrap gap-1">
-                                    <span class="font-semibold text-gray-300">Cibles :</span> ${primaryMuscles.join(', ')}
+                            </div>
+                            <div class="flex flex-col justify-between space-y-3 text-xs">
+                                <div class="space-y-2">
+                                    <div class="bg-black/30 p-3 rounded-xl border border-white/5">
+                                        <strong class="text-white block mb-1">Cues Techniques :</strong>
+                                        <p class="text-gray-300 leading-relaxed">${ex.cue}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button onclick="openGifPicker('${key}', ${index}, '${ex.dbName}', '${ex.name}')" class="apple-button w-full py-2 px-3 rounded-xl text-xs font-semibold text-indigo-300 border border-indigo-500/20 flex items-center justify-center gap-2">
+                                        🔄 Changer de GIF (Suggestions)
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -941,23 +1123,14 @@
             html += `</div>`;
             content.innerHTML = html;
 
+            // Charger les GIFs ExerciseDB V1 de manière asynchrone pour chaque exercice
             workout.exercises.forEach((ex, index) => {
-                const matchedEx = freeExercisesDB.find(item => item.name.toLowerCase().includes(ex.dbName.toLowerCase()));
-                if (matchedEx && matchedEx.images && matchedEx.images.length > 1) {
-                    let imgIdx = 0;
-                    setInterval(() => {
-                        const imgEl = document.getElementById(`img_ex_${key}_${index}`);
-                        if (imgEl) {
-                            imgIdx = (imgIdx + 1) % matchedEx.images.length;
-                            imgEl.src = `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/${matchedEx.images[imgIdx]}`;
-                        }
-                    }, 1200);
-                }
+                loadExerciseVisual(key, index, ex.dbName, ex.name);
             });
         }
 
         function saveSetData(key, exerciseIndex, setIndex, el) {
-            const container = document.getElementById(`sets_list_${key}_${index}`);
+            const container = document.getElementById(`sets_list_${key}_${exerciseIndex}`);
             let setsData = [];
             const rows = container.querySelectorAll('.bg-black\\/40');
             rows.forEach(row => {
@@ -1190,4 +1363,3 @@
     </script>
 </body>
 </html>
-
