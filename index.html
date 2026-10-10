@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apex Performance — Ultimate AI Athletic Coach</title>
+    <!-- PWA Manifest & Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Apex%20Performance%22%2C%22short_name%22%3A%22Apex%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23000000%22%7D">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#000000',
+                            800: '#0a0a0c',
+                            700: '#141417',
+                            600: '#1f1f24',
+                            500: '#2a2a32'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.015em;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(20, 20, 23, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(30, 30, 35, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+        }
+        .apple-button {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .apple-button:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.18);
+        }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-canvas {
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.8) 100%);
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen flex flex-col select-none">
+
+    <!-- Header Apple Navigation -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center font-bold text-xs tracking-tighter text-white">APEX</div>
+            <div>
+                <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 block">Athletic System</span>
+                <h1 class="text-base font-semibold tracking-tight text-white flex items-center gap-2">
+                    Boxeur Thaï / MMA <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                </h1>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="switchTab('readiness')" class="apple-button px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5">
+                <span id="header-readiness-badge" class="text-emerald-400 font-semibold">92%</span> Readiness
+            </button>
+            <button onclick="openProfileModal()" class="apple-button px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5">
+                65 ➔ 70 kg
+            </button>
+        </div>
+    </header>
+
+    <!-- Bar de Navigation Globale (Tabs) -->
+    <nav class="glass-panel border-b border-white/5 px-6 py-2.5 flex justify-center gap-2 text-xs font-medium text-gray-400 overflow-x-auto">
+        <button onclick="switchTab('home')" id="tab-home" class="px-4 py-1.5 rounded-full bg-white/10 text-white transition-all">Séances</button>
+        <button onclick="switchTab('readiness')" id="tab-readiness" class="px-4 py-1.5 rounded-full hover:bg-white/5 hover:text-white transition-all">Readiness</button>
+        <button onclick="switchTab('analytics')" id="tab-analytics" class="px-4 py-1.5 rounded-full hover:bg-white/5 hover:text-white transition-all">Analytique</button>
+        <button onclick="switchTab('nutrition')" id="tab-nutrition" class="px-4 py-1.5 rounded-full hover:bg-white/5 hover:text-white transition-all">Nutrition</button>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <main id="main-container" class="flex-1 max-w-4xl w-full mx-auto p-6 pb-36">
+
+        <!-- 1. VUE ACCUEIL (SÉANCES) -->
+        <div id="home-view" class="space-y-6 animate-fade-in">
+            <!-- Bannière AI Insight & Mode Protection -->
+            <div id="ai-banner" class="glass-card p-6 rounded-3xl relative overflow-hidden border border-white/10">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">AI Coach Active</span>
+                        <h2 class="text-xl font-bold tracking-tight text-white mt-2">Recommandation du jour</h2>
+                        <p id="ai-recommendation-text" class="text-xs text-gray-300 leading-relaxed max-w-xl mt-1">
+                            Readiness optimale (92%). Focus prioritaire sur les **Jambes** (maintien genoux poussés vers l'extérieur). Mode **Épaule Droite SÉCURITÉ** activé.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2 text-[11px]">
+                    <button onclick="toggleShoulderMode()" id="shoulder-mode-btn" class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium hover:bg-amber-500/20">
+                        🛡️ Mode Épaule Droite : Intact
+                    </button>
+                    <span class="px-3 py-1 rounded-full bg-white/5 text-gray-300 border border-white/10">Valgus Correction Active</span>
+                    <span class="px-3 py-1 rounded-full bg-white/5 text-gray-300 border border-white/10">Hypertrophie Fonctionnelle MMA</span>
+                </div>
+            </div>
+
+            <!-- Grille des Groupes Musculaires -->
+            <div>
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4 px-1">Programmes Ciblés & Spécifiques</h3>
+                <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Injecté en JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. VUE DÉTAIL SÉANCE -->
+        <div id="workout-view" class="hidden space-y-6 animate-fade-in">
+            <button onclick="switchTab('home')" class="apple-button px-4 py-2 rounded-xl text-xs font-medium text-gray-300 hover:text-white flex items-center gap-2">
+                ← Retour aux programmes
+            </button>
+            <div id="workout-content" class="space-y-6"></div>
+        </div>
+
+        <!-- 3. VUE READINESS (Bilan Matinal) -->
+        <div id="readiness-view" class="hidden space-y-6 animate-fade-in">
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Readiness Score</span>
+                <h2 class="text-2xl font-bold text-white">Évaluation de Récupération Matinale</h2>
+                <p class="text-xs text-gray-400">Ajuste l'intensité de ta séance selon ton état du jour.</p>
+                
+                <div class="space-y-4 pt-2">
+                    <div>
+                        <label class="text-xs text-gray-300 flex justify-between">Sommeil (Qualité/Durée) <span id="val-sleep">8/10</span></label>
+                        <input type="range" min="1" max="10" value="8" oninput="updateReadinessUI()" id="input-sleep" class="w-full accent-white bg-gray-800 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-300 flex justify-between">Niveau de Stress / Fatigue <span id="val-stress">3/10</span></label>
+                        <input type="range" min="1" max="10" value="3" oninput="updateReadinessUI()" id="input-stress" class="w-full accent-white bg-gray-800 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-300 flex justify-between">Gêne Épaule Droite <span id="val-shoulder">1/10</span></label>
+                        <input type="range" min="1" max="10" value="1" oninput="updateReadinessUI()" id="input-shoulder" class="w-full accent-white bg-gray-800 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-300 flex justify-between">Motivation <span id="val-motivation">9/10</span></label>
+                        <input type="range" min="1" max="10" value="9" oninput="updateReadinessUI()" id="input-motivation" class="w-full accent-white bg-gray-800 rounded-lg">
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-gray-400 block">Score Réponse AI</span>
+                        <span id="computed-readiness" class="text-3xl font-bold text-emerald-400">92%</span>
+                    </div>
+                    <button onclick="saveReadiness()" class="apple-button px-5 py-2.5 rounded-xl text-xs font-semibold text-white">Valider le Bilan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. VUE ANALYTIQUE (GRAPHIQUES) -->
+        <div id="analytics-view" class="hidden space-y-6 animate-fade-in">
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Progression & Projections</span>
+                <h2 class="text-xl font-bold text-white">Évolution Poids (Objectif 70 kg)</h2>
+                <div class="h-48 w-full">
+                    <canvas id="weightChart" class="w-full h-full"></canvas>
+                </div>
+                <div class="bg-white/5 p-4 rounded-2xl text-xs text-gray-300 space-y-1">
+                    <p class="font-semibold text-white">📈 Projection de l'IA :</p>
+                    <p>À un rythme de +0.3 kg/semaine avec un surplus contrôlé de 2700 kcal, tu atteindras <strong class="text-emerald-400">70.0 kg dans 11 semaines</strong> avec une densité musculaire optimale pour les impacts.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. VUE NUTRITION -->
+        <div id="nutrition-view" class="hidden space-y-6 animate-fade-in">
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400">Plan Alimentaire Athlétique</span>
+                        <h2 class="text-xl font-bold text-white">Prise de Masse Sèche : 2700 kcal</h2>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 text-xs font-medium">150g Protéines</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                        <span class="text-gray-400 block">Protéines</span>
+                        <strong class="text-white text-sm">150 g</strong>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                        <span class="text-gray-400 block">Glucides</span>
+                        <strong class="text-white text-sm">340 g</strong>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                        <span class="text-gray-400 block">Lipides</span>
+                        <strong class="text-white text-sm">75 g</strong>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2 text-xs">
+                    <h4 class="font-semibold text-white text-sm">Journée Type Économique & Performante</h4>
+                    <div class="bg-dark-700/60 p-3 rounded-xl border border-white/5 space-y-1">
+                        <strong class="text-amber-400 block">Petit-déjeuner :</strong>
+                        <p class="text-gray-300">100g flocons d'avoine, 1 banane, 30g whey, 15g beurre de cacahuète.</p>
+                    </div>
+                    <div class="bg-dark-700/60 p-3 rounded-xl border border-white/5 space-y-1">
+                        <strong class="text-amber-400 block">Déjeuner :</strong>
+                        <p class="text-gray-300">150g poulet ou viande hachée 5%, 120g riz (pesé cru), légumes surgelés, 1 c.à.s huile d'olive.</p>
+                    </div>
+                    <div class="bg-dark-700/60 p-3 rounded-xl border border-white/5 space-y-1">
+                        <strong class="text-amber-400 block">Collation Pre-Workout :</strong>
+                        <p class="text-gray-300">2 œufs durs, 1 banane, 40g d'amandes ou avoine.</p>
+                    </div>
+                    <div class="bg-dark-700/60 p-3 rounded-xl border border-white/5 space-y-1">
+                        <strong class="text-amber-400 block">Dîner :</strong>
+                        <p class="text-gray-300">150g poisson ou dinde, 350g patates douces ou riz, brocolis à volonté, huile de colza.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Timer de Repos Flottant Apple -->
+    <div id="rest-timer-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass-panel px-6 py-3.5 rounded-full border border-white/20 shadow-2xl flex items-center gap-4 hidden animate-fade-in">
+        <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+            <div>
+                <span class="text-[9px] uppercase font-bold tracking-widest text-gray-400 block">Repos Intelligent</span>
+                <span id="timer-display" class="text-xl font-bold tracking-tight text-white">02:00</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 border-l border-white/10 pl-4">
+            <button onclick="adjustTimer(-15)" class="apple-button px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300">-15s</button>
+            <button onclick="adjustTimer(15)" class="apple-button px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300">+15s</button>
+            <button onclick="stopTimer()" class="apple-button px-3 py-1 rounded-lg text-xs font-semibold text-rose-400 hover:text-rose-300">Stop</button>
+        </div>
+    </div>
+
+    <!-- Modal Profil Utilisateur & Suivi Poids -->
+    <div id="profile-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 space-y-6 border border-white/10 animate-fade-in">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">Profil & Objectif Morphologique</h3>
+                <button onclick="closeProfileModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white">✕</button>
+            </div>
+            <div class="space-y-4 text-sm text-gray-300">
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/5 space-y-2">
+                    <div class="flex justify-between"><span class="text-gray-400">Gabarit :</span><span class="font-medium text-white">Homme, 1m74</span></div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Poids Actuel :</span>
+                        <input type="number" id="user-weight-input" value="65.0" step="0.1" class="w-20 bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-right text-white font-bold">
+                    </div>
+                    <div class="flex justify-between"><span class="text-gray-400">Cible :</span><span class="font-medium text-emerald-400">70.0 kg (Dense & Athlétique)</span></div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Notes Personnelles & Alertes Blessures</label>
+                    <textarea id="user-notes" rows="3" class="w-full bg-dark-700 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-white/30 placeholder-gray-600" placeholder="Notez vos sensations, douleurs éventuelles..."></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="saveProfileModal()" class="apple-button px-5 py-2.5 rounded-xl text-xs font-semibold text-white">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logique & Moteur -->
+    <script>
+        // Moteur de Données des Exercices
+        const workoutsData = {
+            "pectoraux": {
+                title: "Pectoraux",
+                subtitle: "Pecs bombés, densité centrale & protection épaule",
+                exercises: [
+                    {
+                        name: "Développé incliné haltères 30°",
+                        sets: "4 × 8-10",
+                        restSec: 120,
+                        restText: "Repos 2 min",
+                        cue: "Descente en 3 secondes, pause 1 sec en bas, coudes à 45°.",
+                        alt: "Développé incliné à la Smith machine (Si gêne épaule)",
+                        type: "push"
+                    },
+                    {
+                        name: "Développé plat haltères ou machine/Smith",
+                        sets: "3 × 8-10",
+                        restSec: 105,
+                        restText: "Repos 90-120 sec",
+                        cue: "Machine ou Smith recommandée si douleur épaule droite présente.",
+                        alt: "Développé plat guidé Smith",
+                        type: "push"
+                    },
+                    {
+                        name: "Écarté incliné haltères",
+                        sets: "3 × 10-12",
+                        restSec: 75,
+                        restText: "Repos 75-90 sec",
+                        cue: "Contrôle strict de l'étirement sans forcer l'amplitude rétractée.",
+                        alt: "Écarté poulie haute",
+                        type: "fly"
+                    },
+                    {
+                        name: "Écarté poulie hauteur moyenne (Crossover)",
+                        sets: "3 × 12-15",
+                        restSec: 60,
+                        restText: "Repos 60-75 sec",
+                        cue: "Contraction forte au milieu de la poitrine, croiser légèrement les mains.",
+                        alt: "Pec Deck Machine",
+                        type: "fly"
+                    }
+                ]
+            },
+            "dos": {
+                title: "Dos + Posture",
+                subtitle: "Épaisseur, largeur & correction épaules en avant",
+                exercises: [
+                    {
+                        name: "Lat Pulldown ou Tractions",
+                        sets: "4 × 8-12",
+                        restSec: 120,
+                        restText: "Repos 2 min",
+                        cue: "Tirer avec les coudes vers le bas, poitrine sortie vers le haut.",
+                        alt: "Tractions pronation assistées",
+                        type: "pull"
+                    },
+                    {
+                        name: "Row horizontal (haltères ou machine)",
+                        sets: "4 × 8-12",
+                        restSec: 105,
+                        restText: "Repos 90-120 sec",
+                        cue: "Pause 1-2 secondes omoplates totalement resserrées.",
+                        alt: "Rowing câble poulie basse",
+                        type: "pull"
+                    },
+                    {
+                        name: "Straight-arm pulldown",
+                        sets: "3 × 12-15",
+                        restSec: 75,
+                        restText: "Repos 75 sec",
+                        cue: "Isolation du grand dorsal, bras quasiment tendus.",
+                        alt: "Pulldown corde",
+                        type: "pull"
+                    },
+                    {
+                        name: "Face Pull",
+                        sets: "3-4 × 12-15",
+                        restSec: 60,
+                        restText: "Repos 60-75 sec",
+                        cue: "Essentiel pour la posture et la santé de la coiffe des rotateurs.",
+                        alt: "Face pull à l'élastique",
+                        type: "posture"
+                    },
+                    {
+                        name: "Reverse fly ou Prone Y-T-W",
+                        sets: "3 × 12-15",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Renforcement haut du dos et correction des épaules en avant.",
+                        alt: "Oiseau sur banc incliné",
+                        type: "posture"
+                    },
+                    {
+                        name: "Rotations externes élastique",
+                        sets: "2-3 × 12-15 par côté",
+                        restSec: 45,
+                        restText: "Repos 45 sec",
+                        cue: "Coude collé au corps, rotation externe contrôlée.",
+                        alt: "Rotation externe poulie basse",
+                        type: "posture"
+                    }
+                ]
+            },
+            "jambes": {
+                title: "Jambes (Cuisses) — Style Boxeur",
+                subtitle: "Robustesse, épaisseur & correction valgus genoux",
+                exercises: [
+                    {
+                        name: "Band Side Steps (élastique)",
+                        sets: "3 × 12-15 pas/côté",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Élastique au-dessus des genoux, active le moyen fessier anti-valgus.",
+                        alt: "Clamshells avec élastique",
+                        type: "legs"
+                    },
+                    {
+                        name: "Hip Thrust (machine)",
+                        sets: "4 × 8-12",
+                        restSec: 90,
+                        restText: "Repos 90 sec",
+                        cue: "Pause 1 seconde en haut, contraction maximale des fessiers.",
+                        alt: "Hip thrust barre libre",
+                        type: "legs"
+                    },
+                    {
+                        name: "Leg Press ou Hack Squat",
+                        sets: "4 × 8-12",
+                        restSec: 120,
+                        restText: "Repos 2 min",
+                        cue: "OBLIGATOIRE : Genoux poussés vers l'extérieur en permanence, pieds milieu/bas.",
+                        alt: "Goblet Squat lourd",
+                        type: "legs"
+                    },
+                    {
+                        name: "Bulgarian Split Squat (Smith)",
+                        sets: "3-4 × 8-10 par jambe",
+                        restSec: 90,
+                        restText: "Repos 90 sec",
+                        cue: "Genou avant stable et aligné, ne rentre JAMAIS vers l'intérieur.",
+                        alt: "Fentes arrière Smith Machine",
+                        type: "legs"
+                    },
+                    {
+                        name: "Romanian Deadlift",
+                        sets: "3 × 8-10",
+                        restSec: 90,
+                        restText: "Repos 90 sec",
+                        cue: "Étirement fort des ischio-jambiers, hanches poussées loin vers l'arrière.",
+                        alt: "Soulevé de terre jambes tendues haltères",
+                        type: "legs"
+                    },
+                    {
+                        name: "Leg Curl",
+                        sets: "3 × 10-12",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Contrôle excentrique strict de 3 secondes.",
+                        alt: "Leg curl assis machine",
+                        type: "legs"
+                    }
+                ]
+            },
+            "fessiers": {
+                title: "Fessiers",
+                subtitle: "Puissance de frappe & robustesse de hanche",
+                exercises: [
+                    {
+                        name: "Hip Thrust lourd",
+                        sets: "4 × 8-12",
+                        restSec: 120,
+                        restText: "Repos 2 min",
+                        cue: "Exercice principal pour fessiers bombés et robustes. Extension complète.",
+                        alt: "Kas Glute Bridge",
+                        type: "legs"
+                    }
+                ]
+            },
+            "mollets": {
+                title: "Mollets (Boxeur Thaï)",
+                subtitle: "Épaisseur, absorption d'impact & ancrage",
+                exercises: [
+                    {
+                        name: "Standing Calf Raise",
+                        sets: "4-5 × 10-15",
+                        restSec: 60,
+                        restText: "Repos 60-75 sec",
+                        cue: "Amplitude complète, pause 2 secondes en bas, contraction en haut.",
+                        alt: "Mollets à la presse à cuisses",
+                        type: "legs"
+                    },
+                    {
+                        name: "Seated Calf Raise",
+                        sets: "3-4 × 12-20",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Cible le soléaire pour la densité inférieure de la jambe.",
+                        alt: "Mollets assis avec haltères sur genoux",
+                        type: "legs"
+                    }
+                ]
+            },
+            "avant-bras": {
+                title: "Avant-bras / Poignets",
+                subtitle: "Grip de fer & solidité poignet impact",
+                exercises: [
+                    {
+                        name: "Wrist Curl (paumes vers le haut)",
+                        sets: "4 × 15-20",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Flexion complète des poignets sur banc.",
+                        alt: "Flexion poignets poulie",
+                        type: "arms"
+                    },
+                    {
+                        name: "Reverse Wrist Curl (paumes vers le bas)",
+                        sets: "4 × 15-20",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Renforcement des extenseurs du poignet.",
+                        alt: "Reverse curl barre Z",
+                        type: "arms"
+                    },
+                    {
+                        name: "Farmer's Walk ou holds lourds",
+                        sets: "3 × 30-40 sec",
+                        restSec: 90,
+                        restText: "Repos 90 sec",
+                        cue: "Marche contrôlée avec charges lourdes, posture droite.",
+                        alt: "Plate Pinch Hold",
+                        type: "arms"
+                    }
+                ]
+            },
+            "epaules": {
+                title: "Épaules",
+                subtitle: "Largeur 3D & protection de la coiffe",
+                exercises: [
+                    {
+                        name: "Élévations latérales",
+                        sets: "4 × 12-15",
+                        restSec: 60,
+                        restText: "Repos 60-75 sec",
+                        cue: "Mouvement guidé par les coudes, léger penchant vers l'avant.",
+                        alt: "Élévations latérales poulie haute",
+                        type: "shoulders"
+                    },
+                    {
+                        name: "Face Pull",
+                        sets: "3 × 12-15",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Santé de l'épaule et deltoïde postérieur.",
+                        alt: "Reverse pec deck",
+                        type: "shoulders"
+                    },
+                    {
+                        name: "Développé militaire ou machine",
+                        sets: "3 × 8-10",
+                        restSec: 105,
+                        restText: "Repos 90-120 sec",
+                        cue: "ATTENTION ÉPAULE DROITE : Ne pas descendre en dessous du menton.",
+                        alt: "Landmine Press à une main",
+                        type: "shoulders"
+                    },
+                    {
+                        name: "Reverse fly",
+                        sets: "3 × 12-15",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Focus arrière d'épaule.",
+                        alt: "Oiseau haltères",
+                        type: "shoulders"
+                    }
+                ]
+            },
+            "biceps": {
+                title: "Biceps",
+                subtitle: "Densité du bras & verrouillage en grappling",
+                exercises: [
+                    {
+                        name: "Curl barre ou haltères",
+                        sets: "3-4 × 8-12",
+                        restSec: 90,
+                        restText: "Repos 90 sec",
+                        cue: "Tronc fixe, pas de balancement du bas du dos.",
+                        alt: "Curl poulie basse barre droite",
+                        type: "arms"
+                    },
+                    {
+                        name: "Curl marteau",
+                        sets: "3 × 10-12",
+                        restSec: 75,
+                        restText: "Repos 75 sec",
+                        cue: "Développe le brachioradial et l'épaisseur du bras.",
+                        alt: "Curl marteau corde poulie",
+                        type: "arms"
+                    },
+                    {
+                        name: "Curl incliné",
+                        sets: "3 × 10-12",
+                        restSec: 75,
+                        restText: "Repos 75 sec",
+                        cue: "Étirement maximal du chef long du biceps.",
+                        alt: "Curl spider sur banc",
+                        type: "arms"
+                    }
+                ]
+            },
+            "triceps": {
+                title: "Triceps",
+                subtitle: "Extension puissante pour la frappe",
+                exercises: [
+                    {
+                        name: "Extension poulie",
+                        sets: "3-4 × 10-15",
+                        restSec: 60,
+                        restText: "Repos 60-75 sec",
+                        cue: "Coudes verrouillés le long des côtes.",
+                        alt: "Extension triceps corde",
+                        type: "arms"
+                    },
+                    {
+                        name: "Dips (assistés si besoin)",
+                        sets: "3 × 8-12",
+                        restSec: 90,
+                        restText: "Repos 90 sec",
+                        cue: "Buste légèrement penché avant pour épargner l'épaule.",
+                        alt: "Pompes diamant déclinées",
+                        type: "arms"
+                    },
+                    {
+                        name: "Extension haltère au-dessus de la tête",
+                        sets: "3 × 10-12",
+                        restSec: 75,
+                        restText: "Repos 75 sec",
+                        cue: "Cible le chef long du triceps.",
+                        alt: "Extension triceps poulie haute au-dessus tête",
+                        type: "arms"
+                    }
+                ]
+            },
+            "abdos": {
+                title: "Abdos / Core",
+                subtitle: "Gainage blindé & blindage contre les coups",
+                exercises: [
+                    {
+                        name: "Hanging Leg Raises",
+                        sets: "3 × 10-15",
+                        restSec: 75,
+                        restText: "Repos 75 sec",
+                        cue: "Enrouler le bassin en haut sans utiliser l'élan.",
+                        alt: "Relevé de genoux à la chaise romaine",
+                        type: "core"
+                    },
+                    {
+                        name: "Cable Crunch",
+                        sets: "3 × 12-15",
+                        restSec: 60,
+                        restText: "Repos 60-75 sec",
+                        cue: "Flexion de la colonne vertébrale, isoler les grands droits.",
+                        alt: "Crunch au sol lesté",
+                        type: "core"
+                    },
+                    {
+                        name: "Side Plank ou Pallof Press",
+                        sets: "3 × 30-45 sec / côté",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Stabilité anti-rotation indispensable en combat.",
+                        alt: "Suitcase Hold avec kettlebell",
+                        type: "core"
+                    }
+                ]
+            },
+            "mobilite": {
+                title: "Mobilité & Correction Posturale",
+                subtitle: "Ouverture cage, déblocage hanches & alignement",
+                exercises: [
+                    {
+                        name: "Doorway Chest Stretch",
+                        sets: "2 × 30-45 sec / côté",
+                        restSec: 45,
+                        restText: "Repos 45 sec",
+                        cue: "Ouverture pectorale pour contrer les épaules en avant.",
+                        alt: "Étirement pectoral au rouleau de massage",
+                        type: "posture"
+                    },
+                    {
+                        name: "Wall Slides / Wall Angels",
+                        sets: "2-3 × 10-12",
+                        restSec: 45,
+                        restText: "Repos 45 sec",
+                        cue: "Plaquer le bas du dos et les poignets contre le mur.",
+                        alt: "Floor angels au sol",
+                        type: "posture"
+                    },
+                    {
+                        name: "Rotations externes élastique",
+                        sets: "2-3 × 12-15",
+                        restSec: 45,
+                        restText: "Repos 45 sec",
+                        cue: "Renforcement du supra-épineux et infra-épineux.",
+                        alt: "Rotation externe haltère couché",
+                        type: "posture"
+                    },
+                    {
+                        name: "Band Side Steps + Clamshells",
+                        sets: "3 × 15",
+                        restSec: 45,
+                        restText: "Repos 45 sec",
+                        cue: "Désactivation du valgus dynamique.",
+                        alt: "Abductions de hanche couché",
+                        type: "legs"
+                    }
+                ]
+            },
+            "boxeur": {
+                title: "Section Athlète MMA / Boxe",
+                subtitle: "Transfert de force, puissance & conditioning",
+                exercises: [
+                    {
+                        name: "Force fonctionnelle (Goblet Squat, Farmer, Landmine)",
+                        sets: "4 séries",
+                        restSec: 90,
+                        restText: "Repos 90 sec",
+                        cue: "Génération de force du sol vers les poings.",
+                        alt: "Landmine Press & Pivot",
+                        type: "mma"
+                    },
+                    {
+                        name: "Puissance (Kettlebell Swing, MedBall Slam)",
+                        sets: "4 × 10-12",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Triple extension explosive des hanches.",
+                        alt: "Broad Jumps contrôlés",
+                        type: "mma"
+                    },
+                    {
+                        name: "Core anti-rotation et anti-flexion",
+                        sets: "3 séries",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Verrouillage du buste lors de la réception des impacts.",
+                        alt: "Landmine Rotations",
+                        type: "mma"
+                    },
+                    {
+                        name: "Conditioning court et intelligent",
+                        sets: "Intervalles 15/15",
+                        restSec: 60,
+                        restText: "Récupération active",
+                        cue: "Haute intensité reproduisant les rounds de combat.",
+                        alt: "Assault Bike Sprints",
+                        type: "mma"
+                    },
+                    {
+                        name: "Renforcement du cou (si matériel dispo)",
+                        sets: "3 séries",
+                        restSec: 60,
+                        restText: "Repos 60 sec",
+                        cue: "Protection cervicale contre les knockouts et projections.",
+                        alt: "Isométrie cou manuel avec serviette",
+                        type: "mma"
+                    }
+                ]
+            }
+        };
+
+        // État de l'application
+        let shoulderSafetyMode = true;
+        let timerInterval = null;
+        let timeLeft = 0;
+
+        // Render Accueil (Grille des Séances)
+        function renderHome() {
+            const grid = document.getElementById('categories-grid');
+            grid.innerHTML = '';
+
+            for (const [key, workout] of Object.entries(workoutsData)) {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-2xl cursor-pointer flex flex-col justify-between h-36 group';
+                card.onclick = () => openWorkout(key);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">Programme</span>
+                            <svg class="w-4 h-4 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                        <h4 class="text-base font-bold text-white tracking-tight">${workout.title}</h4>
+                    </div>
+                    <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">${workout.subtitle}</p>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        // Vue Détail d'une Séance
+        function openWorkout(key) {
+            const workout = workoutsData[key];
+            switchTab('workout');
+
+            const content = document.getElementById('workout-content');
+            let html = `
+                <div class="glass-card p-6 rounded-3xl mb-6 border border-white/10">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block mb-1">Entraînement Prescrit</span>
+                    <h2 class="text-2xl font-bold tracking-tight text-white">${workout.title}</h2>
+                    <p class="text-xs text-gray-400 mt-1">${workout.subtitle}</p>
+                </div>
+                <div class="space-y-6">
+            `;
+
+            workout.exercises.forEach((ex, index) => {
+                let numSets = 3;
+                const match = ex.sets.match(/^(\d+)/);
+                if (match) numSets = parseInt(match[1]);
+
+                let savedSetsData = [];
+                try {
+                    savedSetsData = JSON.parse(localStorage.getItem(`apex_sets_${key}_${index}`)) || [];
+                } catch(e) { savedSetsData = []; }
+
+                // Vérifier si exercice de poussée épaule et mode sécurité
+                const isShoulderRisk = (key === 'pectoraux' || key === 'epaules') && ex.name.toLowerCase().includes('développé');
+                const displayName = (isShoulderRisk && shoulderSafetyMode) ? `${ex.name} <span class="text-amber-400 text-xs font-normal">(Adapté Épaule)</span>` : ex.name;
+
+                html += `
+                    <div class="glass-card p-5 rounded-3xl space-y-4 border border-white/5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-white/10 text-xs flex items-center justify-center font-bold text-gray-300">${index + 1}</span>
+                                ${displayName}
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-white/5 text-gray-300 border border-white/10">${ex.sets}</span>
+                                <button onclick="startTimer(${ex.restSec})" class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 flex items-center gap-1 transition-all">
+                                    ⏱️ ${ex.restText}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Animation Mouvement (Corps en action) -->
+                        <div class="w-full h-32 rounded-2xl anim-canvas relative overflow-hidden border border-white/10 flex items-center justify-center">
+                            <canvas id="canvas_ex_${key}_${index}" width="320" height="120" class="w-full h-full"></canvas>
+                            <span class="absolute bottom-2 right-3 text-[9px] uppercase font-bold text-gray-500 tracking-widest">Motion Guide 3D</span>
+                        </div>
+
+                        <div class="bg-dark-700/60 p-3 rounded-xl border border-white/5 text-xs text-gray-300 leading-relaxed">
+                            <strong class="text-white font-semibold">Cue Technique :</strong> ${ex.cue}
+                        </div>
+
+                        <!-- Suivi des séries (Poids × Reps) -->
+                        <div class="space-y-2">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Saisie des Performances (Poids kg × Reps)</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                `;
+
+                for (let s = 0; s < numSets; s++) {
+                    const setObj = savedSetsData[s] || { weight: '', reps: '' };
+                    html += `
+                        <div class="bg-black/40 p-2.5 rounded-xl border border-white/10 flex items-center justify-between gap-2">
+                            <span class="text-xs font-medium text-gray-400 w-12">Série ${s + 1}</span>
+                            <div class="flex items-center gap-1.5 flex-1">
+                                <input type="number" step="0.5" placeholder="kg" value="${setObj.weight}" oninput="saveSetData('${key}', ${index}, ${s}, 'weight', this.value)" class="w-full bg-dark-700 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white focus:outline-none focus:border-white/40">
+                                <span class="text-gray-500">×</span>
+                                <input type="number" placeholder="reps" value="${setObj.reps}" oninput="saveSetData('${key}', ${index}, ${s}, 'reps', this.value)" class="w-full bg-dark-700 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white focus:outline-none focus:border-white/40">
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            content.innerHTML = html;
+
+            // Démarrer les animations Canvas pour chaque exercice
+            workout.exercises.forEach((ex, index) => {
+                setTimeout(() => initExerciseCanvas(`canvas_ex_${key}_${index}`, ex.type), 50);
+            });
+        }
+
+        // Moteur d'Animation Canvas (Mini-vidéo anatomique dynamique)
+        function initExerciseCanvas(canvasId, type) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let frame = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+
+                const progress = (Math.sin(frame * 0.05) + 1) / 2; // 0 à 1 fluide
+
+                // Dessin Bonhomme Anatomique
+                ctx.beginPath();
+                // Tête
+                ctx.arc(160, 30, 8, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Tronc
+                ctx.beginPath();
+                ctx.moveTo(160, 38);
+                ctx.lineTo(160, 75);
+                ctx.stroke();
+
+                if (type === 'legs') {
+                    // Mouvement Squat / Press
+                    const hipY = 75 + progress * 15;
+                    const kneeX = 140 - progress * 10;
+                    ctx.beginPath();
+                    ctx.moveTo(160, hipY);
+                    ctx.lineTo(kneeX, 95);
+                    ctx.lineTo(145, 115);
+                    ctx.moveTo(160, hipY);
+                    ctx.lineTo(320 - kneeX, 95);
+                    ctx.lineTo(175, 115);
+                    ctx.stroke();
+                } else if (type === 'push') {
+                    // Mouvement Développé
+                    const handY = 65 - progress * 25;
+                    ctx.beginPath();
+                    ctx.moveTo(160, 48);
+                    ctx.lineTo(135, 55);
+                    ctx.lineTo(130, handY);
+                    ctx.moveTo(160, 48);
+                    ctx.lineTo(185, 55);
+                    ctx.lineTo(190, handY);
+                    ctx.stroke();
+                } else {
+                    // Mouvement Bras / Dos standard
+                    ctx.beginPath();
+                    ctx.moveTo(160, 48);
+                    ctx.lineTo(140 + progress * 10, 65);
+                    ctx.lineTo(135, 85);
+                    ctx.moveTo(160, 48);
+                    ctx.lineTo(180 - progress * 10, 65);
+                    ctx.lineTo(185, 85);
+                    ctx.stroke();
+
+                    // Jambes
+                    ctx.beginPath();
+                    ctx.moveTo(160, 75);
+                    ctx.lineTo(145, 115);
+                    ctx.moveTo(160, 75);
+                    ctx.lineTo(175, 115);
+                    ctx.stroke();
+                }
+
+                frame++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Sauvegarde local des séries
+        function saveSetData(key, exerciseIndex, setIndex, field, value) {
+            let storageKey = `apex_sets_${key}_${exerciseIndex}`;
+            let setsData = [];
+            try {
+                setsData = JSON.parse(localStorage.getItem(storageKey)) || [];
+            } catch(e) { setsData = []; }
+
+            if (!setsData[setIndex]) setsData[setIndex] = { weight: '', reps: '' };
+            setsData[setIndex][field] = value;
+            localStorage.setItem(storageKey, JSON.stringify(setsData));
+        }
+
+        // Gestion du Timer
+        function startTimer(seconds) {
+            if (timerInterval) clearInterval(timerInterval);
+            timeLeft = seconds;
+            document.getElementById('rest-timer-bar').classList.remove('hidden');
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('rest-timer-bar').classList.add('hidden');
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer-display').innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function adjustTimer(amount) {
+            timeLeft = Math.max(0, timeLeft + amount);
+            updateTimerDisplay();
+        }
+
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('rest-timer-bar').classList.add('hidden');
+        }
+
+        // Mode Sécurité Épaule
+        function toggleShoulderMode() {
+            shoulderSafetyMode = !shoulderSafetyMode;
+            const btn = document.getElementById('shoulder-mode-btn');
+            if (shoulderSafetyMode) {
+                btn.className = "px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium hover:bg-amber-500/20";
+                btn.innerText = "🛡️ Mode Épaule Droite : Intact";
+            } else {
+                btn.className = "px-3 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium hover:bg-rose-500/20";
+                btn.innerText = "⚠️ Mode Épaule Droite : Charges Libres";
+            }
+        }
+
+        // Navigation Tabs
+        function switchTab(tab) {
+            const views = ['home', 'workout', 'readiness', 'analytics', 'nutrition'];
+            views.forEach(v => {
+                const el = document.getElementById(`${v}-view`);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById(`tab-${v}`);
+                if (btn) btn.className = "px-4 py-1.5 rounded-full hover:bg-white/5 hover:text-white transition-all text-gray-400";
+            });
+
+            document.getElementById(`${tab}-view`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) activeBtn.className = "px-4 py-1.5 rounded-full bg-white/10 text-white transition-all font-semibold";
+
+            if (tab === 'analytics') renderChart();
+        }
+
+        // Logique Readiness
+        function updateReadinessUI() {
+            const sleep = parseInt(document.getElementById('input-sleep').value);
+            const stress = parseInt(document.getElementById('input-stress').value);
+            const shoulder = parseInt(document.getElementById('input-shoulder').value);
+            const motivation = parseInt(document.getElementById('input-motivation').value);
+
+            document.getElementById('val-sleep').innerText = `${sleep}/10`;
+            document.getElementById('val-stress').innerText = `${stress}/10`;
+            document.getElementById('val-shoulder').innerText = `${shoulder}/10`;
+            document.getElementById('val-motivation').innerText = `${motivation}/10`;
+
+            const score = Math.round(((sleep * 1.5) + ((11 - stress) * 1.0) + ((11 - shoulder) * 1.2) + (motivation * 1.3)) / 5 * 10);
+            const boundedScore = Math.min(100, Math.max(30, score));
+            
+            document.getElementById('computed-readiness').innerText = `${boundedScore}%`;
+            document.getElementById('header-readiness-badge').innerText = `${boundedScore}%`;
+        }
+
+        function saveReadiness() {
+            switchTab('home');
+        }
+
+        // Graphique Canvas Natif (Prise de poids 65kg -> 70kg)
+        function renderChart() {
+            const canvas = document.getElementById('weightChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            const data = [65.0, 65.4, 65.8, 66.1, 66.5, 67.0, 67.4, 68.0, 68.5, 69.1, 69.6, 70.0];
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+
+            // Grille
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < height; i += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(width, i);
+                ctx.stroke();
+            }
+
+            // Courbe
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            data.forEach((val, index) => {
+                const x = (index / (data.length - 1)) * (width - 40) + 20;
+                const y = height - ((val - 64) / 7) * (height - 40) - 20;
+                if (index === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
+
+        // Modal Profil
+        function openProfileModal() {
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function saveProfileModal() {
+            const w = document.getElementById('user-weight-input').value;
+            localStorage.setItem('apex_user_weight', w);
+            closeProfileModal();
+        }
+
+        // Initialisation
+        window.addEventListener('DOMContentLoaded', () => {
+            renderHome();
+            updateReadinessUI();
+        });
+    </script>
+</body>
+</html>
